@@ -24,15 +24,19 @@
 
 ## 기능
 1. 로그인, 회원가입
+
 로그인을 한 사용자만 채팅에 참여할 수 있고, 회원가입을 통해 계정을 만들 수 있습니다.
 
 2. 채팅방 생성
+
 사용자가 채팅방을 생성할 수 있고 참여인원이 0명인 채팅방에 한하여 3시간 후에 자동으로 채팅방이 삭제됩니다.
 
 3. 멀티 채팅방
+
 기존의 단일 채팅방 형태에서 멀티 채팅방 형태로 변경하여 사용자가 여러 채팅방에 참여할 수 있도록 변경하였습니다.
 
 4. 채팅방 인원 확인 기능
+
 채팅방에 사용자가 참여하거나 나갈 때 채팅방 인원이 변경되고 변화를 화면에서 바로 확인할 수 있도록 setTimeout()으로 변경된 채팅방 정보를 받아오도록 하였습니다.<br><br><br>
 
 ## 구조
@@ -66,7 +70,7 @@ JwtAuthenticationFilter에서는 유효한 refreshToken쿠키가 있거나 유�
 
 <ul>5-2. 클라이언트: 응답 바디에 accessToken이 있을 경우 accessToken을 지역변수에 저장한다.</ul>
 
-<ul>6. 클라이언트: 이후 요청 시마다 accessToken을 요청 헤더에 보내며 accessToken은 refreshToken이 유효한 한, setTimeOut()을 이용해 4번처럼 accessToken을 서버에 요청하고 refreshTOken 만료 등의 이유로 accessToken이 발급되지 않은 경우는 /login으로 리다이렉트한다. </ul><br><br><br>
+<ul>6. 클라이언트: 이후 요청 시마다 accessToken을 요청 헤더에 보내며 accessToken은 refreshToken이 유효한 한, setTimeOut()을 이용해 4번처럼 accessToken을 서버에 요청하고 refreshToken 만료 등의 이유로 accessToken이 발급되지 않은 경우는 /login으로 리다이렉트한다. </ul><br><br><br>
 
 ## 초기 기획에서 변경한(개선한) 점
 ### 로그인 후 뒤로 가기 막기
