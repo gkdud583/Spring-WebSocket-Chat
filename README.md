@@ -6,8 +6,7 @@
 ### 미리보기
 ![ezgif com-gif-maker (2)](https://user-images.githubusercontent.com/60775067/137306146-96c6c16c-9960-49d9-a113-ae3c8739ebf3.gif)
 
-## 프로젝트 계획 이유
-채팅 어플리케이션을 만들어보고 싶었고 해당 프로젝트를 진행하면서 Spring Security, WebSocket, SpringBoot 등 사용해 보지 않은 기술, 프레임워크등을 사용해 보고 싶었습니다.<br><br><br>
+
 
 
 ## 기술스택
