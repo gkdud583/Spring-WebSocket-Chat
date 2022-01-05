@@ -93,7 +93,7 @@ public class UserControllerTest {
         ResultActions ra = mvc.perform(
                 post("/signup")
                         .param("email", "test@naver.com")
-                        .param("password", "zns9dyek951956"));
+                        .param("password", "test123456789"));
 
 
         //then
@@ -110,7 +110,7 @@ public class UserControllerTest {
         //when
         ResultActions ra = mvc.perform(post("/signup")
                 .param("email", "test@naver.com")
-                .param("password", "zns9dyek951956"));
+                .param("password", "test123456789"));
 
 
         //then
@@ -122,7 +122,7 @@ public class UserControllerTest {
     void loginSuccess() throws Exception {
         //given
 
-        User user = new User("test@naver.com", "zns9dyek951956");
+        User user = new User("test@naver.com", "test123456789");
         given(userService.loadUserByUsername(anyString()))
                 .willReturn(
                         UserInfo.builder()
@@ -162,14 +162,14 @@ public class UserControllerTest {
     void loginFail() throws Exception {
         //given
 
-        User user = new User("test@naver.com", "zns9dyek951956");
+        User user = new User("test@naver.com", "test123456789");
 
         given(userService.loadUserByUsername(anyString()))
                 .willReturn(
                         UserInfo.builder()
                                 .email("test@naver.com")
                                 .auth("ROLE_USER")
-                                .password(encoder.encode("zns9dyek951956@")).build()
+                                .password(encoder.encode("test123456789")).build()
                 );
 
 
@@ -328,7 +328,7 @@ public class UserControllerTest {
                         UserInfo.builder()
                                 .email("test@naver.com")
                                 .auth("ROLE_USER")
-                                .password(encoder.encode("zns9dyek951956@")).build()
+                                .password(encoder.encode("test123456789")).build()
                 );
 
 
