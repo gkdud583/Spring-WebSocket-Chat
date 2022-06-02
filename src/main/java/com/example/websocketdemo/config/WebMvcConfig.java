@@ -8,11 +8,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
-    public void addViewControllers(ViewControllerRegistry registry){
+    public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/join").setViewName("join");
         registry.addViewController("/chatRoomList").setViewName("chatRoomList");
-
     }
-
-
 }
