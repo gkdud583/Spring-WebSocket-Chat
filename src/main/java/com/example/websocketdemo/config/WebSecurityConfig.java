@@ -1,6 +1,5 @@
 package com.example.websocketdemo.config;
 
-
 import com.example.websocketdemo.exception.AuthEntryPointJwt;
 import com.example.websocketdemo.filter.JwtAuthenticationFilter;
 import com.example.websocketdemo.provider.JwtTokenProvider;
@@ -15,7 +14,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.socket.AbstractSecurityWebSocketMessageBrokerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -32,37 +30,33 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers(HttpMethod.POST, "/signup");
-
-        //Spring Security가 기본 제공하는 formLogin, logout사용 하지 않도록 하기 위해 ignoring에 추가
-        web.ignoring().antMatchers("/ws/**","/", "/join", "/login", "/logout", "/refreshToken", "/js/**", "/css/**", "/error");
+        web.ignoring().antMatchers(HttpMethod.POST, "/api/v1/users/**");
+        web.ignoring().antMatchers("/ws/**", "/", "/join", "/login", "/js/**", "/css/**", "/error");
     }
-
-
 
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http
-            .cors()
-            .and()
-            .csrf().disable()
-            .exceptionHandling().authenticationEntryPoint(unauthorizedHandler())
-            .and()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .authorizeRequests()
-            .anyRequest().authenticated()
-            .and()
-            .addFilterAfter(new JwtAuthenticationFilter(refreshTokenService, jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
-
+                .cors()
+                .and()
+                .csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler())
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests()
+                .anyRequest().authenticated()
+                .and()
+                .addFilterAfter(new JwtAuthenticationFilter(refreshTokenService, jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
     }
 
 
-
     @Bean
-    public AuthenticationEntryPoint unauthorizedHandler(){return new AuthEntryPointJwt();}
+    public AuthenticationEntryPoint unauthorizedHandler() {
+        return new AuthEntryPointJwt();
+    }
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception { // 9
@@ -71,7 +65,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // loadUserByUsername() 구현해야함 (서비스 참고)
                 .passwordEncoder(new BCryptPasswordEncoder());
     }
-
-
-
 }
