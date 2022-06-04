@@ -3,16 +3,12 @@ package com.example.websocketdemo.service;
 import com.example.websocketdemo.entity.RefreshTokenInfo;
 import com.example.websocketdemo.model.RefreshToken;
 import com.example.websocketdemo.repository.RefreshTokenRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-@RequiredArgsConstructor
-@Slf4j
 @Transactional
 @Service
 public class RefreshTokenService {
@@ -20,12 +16,12 @@ public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public String createRefreshToken(RefreshToken refreshToken){
-        refreshTokenRepository.save(RefreshTokenInfo.builder()
-                .email(refreshToken.getEmail())
-                .token(refreshToken.getToken())
-                .expiryDate(refreshToken.getExpiryDate()).build());
+    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository) {
+        this.refreshTokenRepository = refreshTokenRepository;
+    }
 
+    public String createRefreshToken(RefreshToken refreshToken){
+        refreshTokenRepository.save(new RefreshTokenInfo(refreshToken.getEmail(), refreshToken.getToken(), refreshToken.getExpiryDate()));
         return refreshToken.getToken();
     }
 
@@ -34,10 +30,7 @@ public class RefreshTokenService {
         Optional<RefreshTokenInfo> findTokenInfo = refreshTokenRepository.findByToken(token);
         if(findTokenInfo.isPresent()){
 
-            RefreshToken findToken = new RefreshToken(findTokenInfo.get().getEmail());
-            findToken.setToken(findTokenInfo.get().getToken());
-            findToken.setExpiryDate(findTokenInfo.get().getExpiryDate());
-
+            RefreshToken findToken = new RefreshToken(findTokenInfo.get().getEmail(), findTokenInfo.get().getToken(), findTokenInfo.get().getExpiryDate());
             return findToken;
         }else{
             return null;

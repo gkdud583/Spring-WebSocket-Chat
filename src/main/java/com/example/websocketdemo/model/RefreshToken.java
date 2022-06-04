@@ -1,16 +1,7 @@
 package com.example.websocketdemo.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-@Slf4j
-@Getter
-@Setter
-
 
 public class RefreshToken {
 
@@ -22,17 +13,27 @@ public class RefreshToken {
     private LocalDateTime expiryDate;
 
 
-
-
-    public RefreshToken(String email) {
+    public RefreshToken(String email, String token) {
         this.email = email;
-
+        this.token = token;
+        this.expiryDate = LocalDateTime.now().plusMinutes(tokenValidTime);
     }
-    public static RefreshToken create(String email){
-        RefreshToken refreshToken = new RefreshToken(email);
-        refreshToken.setToken(UUID.randomUUID().toString());
-        refreshToken.setExpiryDate(LocalDateTime.now().plusMinutes(tokenValidTime));
 
-        return refreshToken;
+    public RefreshToken(String email, String token, LocalDateTime expiryDate) {
+        this.email = email;
+        this.token = token;
+        this.expiryDate = expiryDate;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public LocalDateTime getExpiryDate() {
+        return expiryDate;
     }
 }

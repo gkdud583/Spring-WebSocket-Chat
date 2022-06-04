@@ -1,15 +1,10 @@
 package com.example.websocketdemo.entity;
 
-import lombok.*;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Getter
-@Setter
 public class RefreshTokenInfo {
 
     @Id
@@ -22,7 +17,10 @@ public class RefreshTokenInfo {
     @Column
     private LocalDateTime expiryDate;
 
-    @Builder
+
+    protected RefreshTokenInfo() {
+    }
+
     public RefreshTokenInfo(String email, String token, LocalDateTime expiryDate){
         this.email = email;
         this.token = token;
@@ -33,6 +31,18 @@ public class RefreshTokenInfo {
         this.email = email;
         this.token = UUID.randomUUID().toString();
         this.expiryDate = expiryDate;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public LocalDateTime getExpiryDate() {
+        return expiryDate;
     }
 }
 

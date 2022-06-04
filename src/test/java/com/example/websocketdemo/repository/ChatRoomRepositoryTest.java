@@ -1,7 +1,6 @@
 package com.example.websocketdemo.repository;
 
 import com.example.websocketdemo.entity.ChatRoomInfo;
-import com.example.websocketdemo.model.ChatRoom;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 public class ChatRoomRepositoryTest {
-    static ChatRoom chatRoom;
+    static com.example.websocketdemo.model.ChatRoom chatRoom;
 
     @Autowired
     ChatRoomRepository chatRoomRepository;
@@ -23,7 +22,7 @@ public class ChatRoomRepositoryTest {
 
     @BeforeEach
     void beforeEach(){
-        chatRoom = ChatRoom.create("test");
+        chatRoom = com.example.websocketdemo.model.ChatRoom.create("test");
         chatRoomRepository.save(ChatRoomInfo.builder()
                 .id(chatRoom.getId())
                 .name(chatRoom.getName())

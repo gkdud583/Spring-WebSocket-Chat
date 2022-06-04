@@ -9,30 +9,31 @@ import com.example.websocketdemo.provider.JwtTokenProvider;
 import com.example.websocketdemo.repository.RefreshTokenRepository;
 import com.example.websocketdemo.service.RefreshTokenService;
 import com.example.websocketdemo.service.UserService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.Date;
 
-@Slf4j
 @RequestMapping("api/v1/users")
-@RequiredArgsConstructor
 @Controller
 public class UserController {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
+
+    public UserController(RefreshTokenRepository refreshTokenRepository, UserService userService, JwtTokenProvider jwtTokenProvider, RefreshTokenService refreshTokenService) {
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.userService = userService;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.refreshTokenService = refreshTokenService;
+    }
 
     @PostMapping("/signup")
     @ResponseBody
@@ -71,7 +72,7 @@ public class UserController {
             Date expiration = jwtTokenProvider.getTokenExpiration(accessToken);
 
             //refreshToken
-            String refreshToken = refreshTokenService.createRefreshToken(RefreshToken.create(userInfo.getEmail()));
+            String refreshToken = refreshTokenService.createRefreshToken(new RefreshToken(userInfo.getEmail(), accessToken));
 
 
             Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);

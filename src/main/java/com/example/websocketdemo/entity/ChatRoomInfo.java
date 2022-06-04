@@ -1,14 +1,9 @@
 package com.example.websocketdemo.entity;
 
-import lombok.*;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Getter
-@Setter
 public class ChatRoomInfo {
 
     @Id
@@ -24,7 +19,9 @@ public class ChatRoomInfo {
     @Column
     private LocalDateTime expiryDate;
 
-    @Builder
+    protected ChatRoomInfo() {
+    }
+
     public ChatRoomInfo(String id, String name, long count, LocalDateTime expiryDate){
         this.id = id;
         this.name = name;
@@ -32,9 +29,19 @@ public class ChatRoomInfo {
         this.expiryDate = expiryDate;
     }
 
+    public String getId() {
+        return id;
+    }
 
+    public String getName() {
+        return name;
+    }
 
+    public long getCount() {
+        return count;
+    }
 
-
-
+    public LocalDateTime getExpiryDate() {
+        return expiryDate;
+    }
 }

@@ -1,7 +1,6 @@
 package com.example.websocketdemo.interceptor;
 
 import com.example.websocketdemo.provider.JwtTokenProvider;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -14,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-@Slf4j
 @Service
 public class AuthChannelInterceptor implements ChannelInterceptor {
 

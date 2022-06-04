@@ -1,6 +1,5 @@
 package com.example.websocketdemo.entity;
 
-import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,10 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.*;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Getter
-@Setter
 public class UserInfo implements UserDetails {
 
 
@@ -25,13 +21,23 @@ public class UserInfo implements UserDetails {
     @Column
     private String auth;
 
-    @Builder
+    protected UserInfo() {
+    }
+
     public UserInfo(String email, String password, String auth) {
         this.email = email;
         this.password = password;
         this.auth = auth;
     }
 
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getAuth() {
+        return auth;
+    }
 
     // 사용자의 권한을 콜렉션 형태로 반환
     // 단, 클래스 자료형은 GrantedAuthority를 구현해야함

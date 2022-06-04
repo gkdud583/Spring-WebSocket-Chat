@@ -18,8 +18,6 @@ dependencies {
 	implementation 'org.springframework:spring-messaging:5.3.9'
 // https://mvnrepository.com/artifact/org.springframework.security/spring-security-messaging
 	implementation 'org.springframework.security:spring-security-messaging:5.4.6'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

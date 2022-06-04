@@ -22,12 +22,8 @@ public class RefreshTokenRepositoryTest {
 
     @BeforeEach
     void beforeEach(){
-        refreshToken = RefreshToken.create("test@naver.com");
-        refreshTokenRepository.save(RefreshTokenInfo.builder()
-                .email(refreshToken.getEmail())
-                .token(refreshToken.getToken())
-                .expiryDate(refreshToken.getExpiryDate()).build());
-
+        refreshToken = new RefreshToken("test@naver.com", "refreshToken");
+        refreshTokenRepository.save(new RefreshTokenInfo(refreshToken.getEmail(), refreshToken.getToken(), refreshToken.getExpiryDate()));
     }
     @AfterEach
     void afterEach() {

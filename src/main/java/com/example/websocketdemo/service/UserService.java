@@ -3,8 +3,6 @@ package com.example.websocketdemo.service;
 import com.example.websocketdemo.entity.UserInfo;
 import com.example.websocketdemo.model.User;
 import com.example.websocketdemo.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,12 +10,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-@Slf4j
+
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     /**
      * 로그인
      * @param email
@@ -42,10 +44,7 @@ public class UserService implements UserDetailsService {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         user.setPassword(encoder.encode(user.getPassword()));
 
-        userRepository.save(UserInfo.builder()
-                .email(user.getEmail())
-                .auth(user.getAuth())
-                .password(user.getPassword()).build());
+        userRepository.save(new UserInfo(user.getEmail(), user.getPassword(), user.getAuth()));
 
     }
 

@@ -1,7 +1,6 @@
 package com.example.websocketdemo.service;
 
 import com.example.websocketdemo.entity.ChatRoomInfo;
-import com.example.websocketdemo.model.ChatRoom;
 import com.example.websocketdemo.repository.ChatRoomRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +31,7 @@ public class ChatRoomServiceTest {
     @Test
     void save(){
         //given
-        ChatRoom chatRoom = ChatRoom.create("test");
+        com.example.websocketdemo.model.ChatRoom chatRoom = com.example.websocketdemo.model.ChatRoom.create("test");
         //when
         chatRoomService.save(chatRoom);
         //then
@@ -59,7 +58,7 @@ public class ChatRoomServiceTest {
         //given
         String name = "test";
 
-        ChatRoom chatRoom = ChatRoom.create(name);
+        com.example.websocketdemo.model.ChatRoom chatRoom = com.example.websocketdemo.model.ChatRoom.create(name);
         ChatRoomInfo chatRoomInfo = ChatRoomInfo.builder()
                                                 .id(chatRoom.getId())
                                                 .name(chatRoom.getName())

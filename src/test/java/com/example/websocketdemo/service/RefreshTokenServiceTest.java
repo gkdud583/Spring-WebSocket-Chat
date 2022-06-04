@@ -28,7 +28,7 @@ public class RefreshTokenServiceTest {
     @Test
     void createRefreshToken(){
         //givn
-        RefreshToken refreshToken = RefreshToken.create("test");
+        RefreshToken refreshToken = new RefreshToken("test", "refreshToken");
 
         //when
         refreshTokenService.createRefreshToken(refreshToken);
@@ -40,11 +40,8 @@ public class RefreshTokenServiceTest {
     @Test
     void findByToken(){
         //given
-        RefreshToken refreshToken = RefreshToken.create("test@naver.com");
-        RefreshTokenInfo refreshTokenInfo = RefreshTokenInfo.builder()
-                                            .email(refreshToken.getEmail())
-                                            .token(refreshToken.getToken())
-                                            .expiryDate(refreshToken.getExpiryDate()).build();
+        RefreshToken refreshToken = new RefreshToken("test@naver.com", "refreshToken");
+        RefreshTokenInfo refreshTokenInfo = new RefreshTokenInfo(refreshToken.getEmail(), refreshToken.getToken(), refreshToken.getExpiryDate());
         given(refreshTokenRepository.findByToken(refreshToken.getToken()))
                 .willReturn(Optional.of(refreshTokenInfo));
 
@@ -59,7 +56,7 @@ public class RefreshTokenServiceTest {
     @Test
     void verifyExpiration(){
         //given
-        RefreshToken refreshToken = RefreshToken.create("test");
+        RefreshToken refreshToken = new RefreshToken("test", "refreshToken");
         refreshTokenService.createRefreshToken(refreshToken);
 
         //when

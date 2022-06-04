@@ -5,7 +5,6 @@ import com.example.websocketdemo.filter.JwtAuthenticationFilter;
 import com.example.websocketdemo.provider.JwtTokenProvider;
 import com.example.websocketdemo.service.RefreshTokenService;
 import com.example.websocketdemo.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,12 +20,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserService userService;
     private final RefreshTokenService refreshTokenService;
     private final JwtTokenProvider jwtTokenProvider;
+
+    public WebSecurityConfig(UserService userService, RefreshTokenService refreshTokenService, JwtTokenProvider jwtTokenProvider) {
+        this.userService = userService;
+        this.refreshTokenService = refreshTokenService;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
 
     @Override
     public void configure(WebSecurity web) throws Exception {

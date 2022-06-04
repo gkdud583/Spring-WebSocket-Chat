@@ -4,11 +4,10 @@ import com.example.websocketdemo.authentication.RefreshAuthToken;
 import com.example.websocketdemo.model.RefreshToken;
 import com.example.websocketdemo.provider.JwtTokenProvider;
 import com.example.websocketdemo.service.RefreshTokenService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -17,12 +16,16 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-@Slf4j
-@RequiredArgsConstructor
+
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private final RefreshTokenService refreshTokenService;
     private final JwtTokenProvider jwtTokenProvider;
+
+    public JwtAuthenticationFilter(RefreshTokenService refreshTokenService, JwtTokenProvider jwtTokenProvider) {
+        this.refreshTokenService = refreshTokenService;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -46,13 +49,9 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
                     if (cookie.getName().equals("refreshToken")) {
                         RefreshToken refreshToken = refreshTokenService.findByToken(cookie.getValue());
                         if (refreshToken != null && refreshTokenService.verifyExpiration(refreshToken)) {
-
                             RefreshAuthToken refreshAuthToken = new RefreshAuthToken();
-
                             refreshAuthToken.setAuthenticated(true);
                             SecurityContextHolder.getContext().setAuthentication(refreshAuthToken);
-
-
                             break;
                         }
                     }
