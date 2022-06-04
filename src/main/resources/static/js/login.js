@@ -17,10 +17,13 @@ function login(){
         localStorage.setItem('email', emailInput.value);
 
 
-        fetch('https://chatting-app-side-project.herokuapp.com/login', {
+        fetch('/api/v1/users/login', {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
             cache: 'no-cache',
-            body: new URLSearchParams({
+            body: JSON.stringify({
                 email: emailInput.value,
                 password: passwordInput.value
             })
@@ -29,7 +32,7 @@ function login(){
         .then(text => {
             try {
                 const data = JSON.parse(text);
-                window.location.href = "https://chatting-app-side-project.herokuapp.com/chatRoomList";
+                window.location.href = "/chatRoomList";
 
             } catch(err) {
                 alert("아이디 또는 비밀번호가 틀립니다!");

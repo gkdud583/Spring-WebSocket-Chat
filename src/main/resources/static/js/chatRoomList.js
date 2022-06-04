@@ -11,7 +11,7 @@ var nameInput = document.querySelector("#name");
 var chatRoomHeader = document.querySelector(".chat-header h2");
 var chatRoomListBtn = document.querySelector(".chatRoomList-btn");
 var exitBtn = document.querySelector(".exit-btn");
-
+var logoutBtn = document.querySelector(".logout-btn");
 var isCheck = false;
 var accessToken = null;
 var refreshToken = null;
@@ -171,7 +171,7 @@ function makeChatRoom(){
     if(nameInput.value === "")
         return;
 
-    fetch('https://chatting-app-side-project.herokuapp.com/add/room', {
+    fetch('/api/v1/chatRooms', {
                             method: 'POST',
                             cache: 'no-cache',
                             withCredentials: true,
@@ -223,7 +223,7 @@ function showChatRoom(){
     //show chatting room
 
 
-    fetch("https://chatting-app-side-project.herokuapp.com/chatRooms",{
+    fetch("/api/v1/chatRooms",{
 
         method: 'GET',
         cache: 'no-cache',
@@ -253,9 +253,9 @@ function refreshAccessToken(){
     var now = new Date();
 
     if(accessToken == null || (now.getTime() > expiryDate.getTime())){
-        fetch('https://chatting-app-side-project.herokuapp.com/refreshToken',{
+        fetch('/api/v1/users/refreshToken',{
             credentials: "same-origin",
-            method: 'GET'
+            method: 'POST'
         })
         .then(response => response.text())
         .then(text => {
@@ -268,10 +268,10 @@ function refreshAccessToken(){
 
             } catch(err) {
                  //refreshToken 만료 혹은 삭제됨
-                 window.location.href = "https://chatting-app-side-project.herokuapp.com/login";
+                 window.location.href = "/login";
             }
 
-            return  fetch("https://chatting-app-side-project.herokuapp.com/chatRooms",{
+            return  fetch("/api/v1/chatRooms",{
 
                            method: 'GET',
                            cache: 'no-cache',
@@ -302,7 +302,7 @@ function refreshAccessToken(){
 
         });
     }else{
-        fetch("https://chatting-app-side-project.herokuapp.com/chatRooms",{
+        fetch("/api/v1/chatRooms",{
 
                method: 'GET',
                cache: 'no-cache',
@@ -333,7 +333,18 @@ function refreshAccessToken(){
 }
 
 
-
+function logout(){
+    fetch('/api/v1/users/logout', {
+        method: 'POST',
+        cache: 'no-cache',
+        withCredentials: true,
+        credentials: 'include',
+        headers: {
+            'Authorization': accessToken,
+        },
+    })
+        .then((response) => window.location.href = "/");
+}
 
 
 
@@ -343,7 +354,7 @@ tbody.addEventListener('click', enter, true);
 chatRoomForm.addEventListener('submit', makeChatRoom, true);
 messageForm.addEventListener('submit', sendMessage, true);
 exitBtn.addEventListener('click', exit, true);
-
+logoutBtn.addEventListener('click', logout, true);
 
 
 

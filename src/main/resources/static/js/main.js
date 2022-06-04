@@ -12,10 +12,10 @@ var colors = [
 
 
 function login(){
-    window.location.href = 'https://chatting-app-side-project.herokuapp.com/login';
+    window.location.href = '/login';
 }
 function join(){
-    window.location.href = 'https://chatting-app-side-project.herokuapp.com/join';
+    window.location.href = '/join';
 }
 loginBtn.addEventListener('click', login, true);
 joinBtn.addEventListener('click', join, true);
