@@ -104,11 +104,11 @@ button.accent {
     color: #fff;
 }
 
-#username-page, #chatRoom-add-page{
+#index-page, #login-page, #join-page{
     text-align: center;
 }
 
-.username-page-container, .chatRoom-add-page-container{
+.index-page-container, .login-page-container, .join-page-container{
     background: #fff;
     box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
     border-radius: 2px;
@@ -128,7 +128,7 @@ button.accent {
     margin-top: -160px;
 }
 
-.username-page-container .username-submit, .chatRoom-add-page-container .roomName-submit{
+.index-page-container button, .login-page-container .login-submit, .join-page-container .join-submit {
     margin-top: 10px;
 }
 
@@ -221,6 +221,7 @@ button.accent {
 #messageForm .input-group input {
     float: left;
     width: calc(100% - 85px);
+    border-radius: 4px;
 }
 
 #messageForm .input-group button {
@@ -228,9 +229,12 @@ button.accent {
     width: 80px;
     height: 38px;
     margin-left: 5px;
+    border-radius: 4px;
+
+
 }
 
-.chat-header {
+.chat-header, .chatRoom-header {
     text-align: center;
     padding: 15px;
     border-bottom: 1px solid #ececec;
@@ -265,7 +269,7 @@ button.accent {
         height: calc(100% - 30px);
     }
 
-    .username-page-container, .chatRoom-add-page-container{
+    .index-page-container, .login-page-container, .join-page-container{
         width: auto;
         margin-left: 15px;
         margin-right: 15px;
@@ -280,11 +284,12 @@ button.accent {
         width: 65px;
     }
 
+
     #messageForm .input-group input {
         width: calc(100% - 70px);
     }
 
-    .chat-header {
+    .chat-header, .chatRoom-header{
         padding: 10px;
     }
 
@@ -297,13 +302,99 @@ button.accent {
     }
 }
 
-.make-btn{
-    height:42px;
+
+
+#loginForm .form-group, #joinForm .form-group{
+    margin-top: 30px;
+}
+
+.name-alert, .max-alert, .email-alert, .password-alert{
+    color: red;
+}
+
+.index-page-container button{
+    margin-top: 30px;
+    width: 70px;
+}
+
+.index-page-container .login-btn{
+    margin-right: 30px;
+}
+
+
+#join-link a, #login-link a{
+    text-decoration: none;
+
+}
+
+.chatRoom-header .logout-btn{
+    margin-left: 84%;
+    margin-bottom: 3%;
+    border-radius: 4px;
+    font-size: 15px;
+    line-height: 1px;
+    border-color: #dbdbdb;
+    background-color: #fff;
+}
+
+.chatRoom-name{
+    min-width: 100px;
+    max-width: 100px;
     overflow:hidden;
-    line-height: 5px!important;
-    vertical-align:middle!important;
-    font-size:18px;
-    margin-left:595px;
-    margin-top: 10px;
-    font-weight: bold;
+    white-space: nowrap; /*기본적으로 block요소에 있는 텍스트가 너비를 벗어나게 되면 자동 줄바꿈이 되는데 이를 막기 위해 nowrap*/
+    text-overflow: ellipsis; /*말줄임 표시 하기 위해*/
+}
+
+.chat-header h2{
+    min-width: 500px;
+    max-width: 500px;
+    margin-left: 77px;
+    text-align: center;
+    overflow:hidden;
+    white-space: nowrap; /*기본적으로 block요소에 있는 텍스트가 너비를 벗어나게 되면 자동 줄바꿈이 되는데 이를 막기 위해 nowrap*/
+    text-overflow: ellipsis; /*말줄임 표시 하기 위해*/
+
+}
+#roomArea{
+    text-align:center;
+}
+.chatRoom td{
+    vertical-align:middle;
+}
+
+.chatRoom-btn-container button{
+    background-color:
+}
+
+.chatRoom-btn-container button:hover{
+    background-color: rgb(206 206 215);
+}
+
+#roomForm .form-group input[name="name"]{
+        display:inline!important;
+        width: 70%!important;
+        border-radius: 4px;
+    }
+#roomForm .form-group button{
+    font-size:15px;
+    vertical-align:baseline;
+    border-radius: 4px;
+}
+
+.chat-btn-container{
+    position: relative;
+    top: 2%;
+    left: 75%;
+    font-size: 15px;
+
+}
+
+.chat-btn-container .exit-btn{
+    position: absolute;
+    border-radius: 4px;
+    margin-left: 10%;
+    background-color: #ff7867;
+    border-color: inherit;
+    color: #fff;
+    line-height: 1px;
 }

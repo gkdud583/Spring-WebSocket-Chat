@@ -17,7 +17,7 @@ function login(){
         localStorage.setItem('email', emailInput.value);
 
 
-        fetch('http://localhost:8080/login', {
+        fetch('https://chatting-app-side-project.herokuapp.com/login', {
             method: 'POST',
             cache: 'no-cache',
             body: new URLSearchParams({
@@ -29,7 +29,7 @@ function login(){
         .then(text => {
             try {
                 const data = JSON.parse(text);
-                window.location.href = "http://localhost:8080/chatRoomList";
+                window.location.href = "https://chatting-app-side-project.herokuapp.com/chatRoomList";
 
             } catch(err) {
                 alert("아이디 또는 비밀번호가 틀립니다!");

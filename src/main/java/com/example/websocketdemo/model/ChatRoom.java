@@ -1,44 +1,40 @@
 package com.example.websocketdemo.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Getter
+@Setter
 public class ChatRoom {
-    private String roomId;
+    private static final long chatRoomValidTime = 3;
+
+    private String id;
     private String name;
+    private long count;
+    private LocalDateTime expiryDate;
+
+    public ChatRoom() {
+    }
 
     public ChatRoom(String name) {
         this.name = name;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(String roomId) {
-        this.roomId = roomId;
-    }
-
-    @Override
-    public String toString() {
-        return "ChatRoom{" +
-                "roomId='" + roomId + '\'' +
-                ", name='" + name + '\'' +
-                '}';
-    }
-
     public static ChatRoom create(String name){
         ChatRoom chatRoom = new ChatRoom(name);
-        chatRoom.setRoomId(UUID.randomUUID().toString());
+        chatRoom.id = UUID.randomUUID().toString();
+        chatRoom.count = 0;
+        chatRoom.expiryDate = LocalDateTime.now().plusHours(chatRoomValidTime);
 
         return chatRoom;
+    }
+    public void minCount(){
+        count--;
+    }
+    public void addCount(){
+        count++;
     }
 
 }

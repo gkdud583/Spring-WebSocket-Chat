@@ -1,14 +1,13 @@
 package com.example.websocketdemo.repository;
 
-import com.example.websocketdemo.model.ChatRoom;
+import com.example.websocketdemo.entity.ChatRoomInfo;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public interface ChatRoomRepository {
-    public ChatRoom save(ChatRoom room);
-    public List<ChatRoom> findAll();
+
+public interface ChatRoomRepository extends JpaRepository<ChatRoomInfo, Long> {
+    Optional<ChatRoomInfo> findById(String id);
+    void deleteById(String id);
 
 }

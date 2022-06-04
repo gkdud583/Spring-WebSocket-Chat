@@ -1,56 +1,48 @@
 package com.example.websocketdemo.controller;
 
 import com.example.websocketdemo.model.ChatRoom;
-import com.example.websocketdemo.repository.ChatRoomRepository;
-import com.example.websocketdemo.repository.MemoryChatRoomRepository;
+import com.example.websocketdemo.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.*;
+
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class ChatRoomController {
-    private final ChatRoomRepository chatRoomRepository;
+    private final ChatRoomService chatRoomService;
 
-    @GetMapping("/chatRoom")
+    // 전체 채팅방 검색
+    @GetMapping("/chatRooms")
     @ResponseBody
-    public List<ChatRoom>  chatRooms(){
-        
-        List<ChatRoom> rooms = chatRoomRepository.findAll();
-        for (ChatRoom room : rooms) {
-            System.out.println(room.getRoomId()+" "+room.getName());
-        }
+    public List<ChatRoom>  findChatRooms(){
+        List<ChatRoom> rooms = chatRoomService.findAll();
         return rooms;
     }
 
-    @PostMapping("/add")
-    public String addChatRoom(String chatRoomName, RedirectAttributes redirectAttributes){
+    //채팅방 추가
+    @PostMapping("/add/room")
+    @ResponseBody
+    public ChatRoom addChatRoom(String name) {
+        ChatRoom chatRoom = ChatRoom.create(name);
+        chatRoomService.save(chatRoom);
 
+        return chatRoom;
 
-        ChatRoom saveRoom = chatRoomRepository.save(ChatRoom.create(chatRoomName));
-        redirectAttributes.addAttribute("status", true);
-        return "redirect:/chatRoom.html";
     }
 
     //테스트용 데이터 추가
-    /**
-     * 테스트용 데이터 추가
-     */
     @PostConstruct
     public void init(){
-        chatRoomRepository.save(ChatRoom.create("Room1"));
-        chatRoomRepository.save(ChatRoom.create("Room2"));
-        chatRoomRepository.save(ChatRoom.create("Room3"));
-
-        chatRoomRepository.save(ChatRoom.create("Room4"));
+        chatRoomService.save(ChatRoom.create("test1"));
+        chatRoomService.save(ChatRoom.create("test2"));
+        chatRoomService.save(ChatRoom.create("test3"));
+        chatRoomService.save(ChatRoom.create("test4"));
 
     }
 

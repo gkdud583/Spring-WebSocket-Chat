@@ -1,15 +1,27 @@
 package com.example.websocketdemo.model;
 
+
 public class ChatMessage {
     private MessageType type;
     private String content;
     private String sender;
+    private String email;
 
 
     public enum MessageType {
         CHAT,
         JOIN,
-        LEAVE
+        LEAVE,
+        ERROR,
+
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public MessageType getType() {
@@ -42,6 +54,7 @@ public class ChatMessage {
                 "type=" + type +
                 ", content='" + content + '\'' +
                 ", sender='" + sender + '\'' +
+                ", email='" + email + '\'' +
                 '}';
     }
 }

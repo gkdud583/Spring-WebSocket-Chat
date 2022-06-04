@@ -8,7 +8,7 @@ function join(){
     if(!validateEmail() || !validatePassword())
         alert("입력 정보가 적절하지 않습니다!");
     else{
-            fetch('http://localhost:8080/signup', {
+            fetch('https://chatting-app-side-project.herokuapp.com/signup', {
                 method: 'POST',
                 cache: 'no-cache',
                 body: new URLSearchParams({
@@ -19,7 +19,7 @@ function join(){
             .then((response) => {
                 if(response.status === 200){
                     alert("가입 되었습니다!");
-                    window.location.href = "http://localhost:8080/login";
+                    window.location.href = "https://chatting-app-side-project.herokuapp.com/login";
                 }else if(response.status === 400){
                     alert("이미 가입된 이메일입니다!");
                 }

@@ -1,7 +1,8 @@
-'use strict';
 
 
-var usernameForm = document.querySelector('#usernameForm');
+var loginBtn = document.querySelector(".login-btn");
+var joinBtn = document.querySelector(".join-btn");
+
 
 
 var colors = [
@@ -9,15 +10,12 @@ var colors = [
     '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
 ];
 
-function showChatRoom(){
-    var username = document.querySelector('#name').value.trim();
-    if(username){
-        localStorage.setItem('username',username);
-        window.location.href = 'http://localhost:8080/chatRoom.html';
-    }
-    event.preventDefault();
+
+function login(){
+    window.location.href = 'https://chatting-app-side-project.herokuapp.com/login';
 }
-
-
-usernameForm.addEventListener('submit', showChatRoom, true);
-
+function join(){
+    window.location.href = 'https://chatting-app-side-project.herokuapp.com/join';
+}
+loginBtn.addEventListener('click', login, true);
+joinBtn.addEventListener('click', join, true);
