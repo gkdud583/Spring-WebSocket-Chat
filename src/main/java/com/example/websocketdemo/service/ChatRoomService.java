@@ -1,16 +1,16 @@
 package com.example.websocketdemo.service;
 
 
-import com.example.websocketdemo.entity.ChatRoomInfo;
-import com.example.websocketdemo.model.ChatRoom;
+import com.example.websocketdemo.entity.ChatRoom;
+import com.example.websocketdemo.exception.CustomException;
+import com.example.websocketdemo.model.ChatRoomResponse;
 import com.example.websocketdemo.repository.ChatRoomRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
+import static com.example.websocketdemo.exception.ErrorCode.NOT_FOUND_CHAT_ROOM;
+import static java.time.LocalDateTime.now;
 
 @Transactional
 @Service
@@ -21,51 +21,29 @@ public class ChatRoomService {
         this.chatRoomRepository = chatRoomRepository;
     }
 
-    public void save(com.example.websocketdemo.model.ChatRoom chatRoom){
-        chatRoomRepository.save(new ChatRoomInfo(chatRoom.getId(), chatRoom.getName(), chatRoom.getCount(), chatRoom.getExpiryDate()));
-
-
-    }
-    public List<com.example.websocketdemo.model.ChatRoom> findAll(){
-        List<com.example.websocketdemo.model.ChatRoom> chatRooms = new LinkedList<>();
-        chatRoomRepository.findAll().forEach(chatRoomInfo -> {
-            com.example.websocketdemo.model.ChatRoom chatRoom = new ChatRoom(chatRoomInfo.getId(), chatRoomInfo.getName(), chatRoomInfo.getCount(), chatRoomInfo.getExpiryDate());
-
-            chatRooms.add(chatRoom);
-        });
-        return chatRooms;
+    public void save(String name) {
+        chatRoomRepository.save(new ChatRoom(name));
     }
 
-    public com.example.websocketdemo.model.ChatRoom findById(String id){
-        Optional<ChatRoomInfo> findChatRoom = chatRoomRepository.findById(id);
-        if(findChatRoom.isPresent()){
-            ChatRoomInfo chatRoomInfo = findChatRoom.get();
-            com.example.websocketdemo.model.ChatRoom chatRoom = new ChatRoom(chatRoomInfo.getId(), chatRoomInfo.getName(), chatRoomInfo.getCount(), chatRoomInfo.getExpiryDate());
-
-            return chatRoom;
-
-        }
-        return null;
-
+    public List<ChatRoomResponse> findAll() {
+        return chatRoomRepository.findAll().stream().map((chatRoom) -> new ChatRoomResponse(chatRoom)).collect(Collectors.toList());
     }
-    public void deleteByCreatedDateLessThanEqual(){
-        LocalDateTime now = LocalDateTime.now();
 
-        List<ChatRoomInfo> findChatRooms = chatRoomRepository.findAll();
-
-        if(findChatRooms != null){
-            for(int i=0; i<findChatRooms.size(); i++){
-                ChatRoomInfo chatRoomInfo = findChatRooms.get(i);
-                if (chatRoomInfo.getExpiryDate().isBefore(now) && chatRoomInfo.getCount() == 0) {
-
-                    chatRoomRepository.deleteById(chatRoomInfo.getId());
-
-
-                }
-
+    public void deleteByCreatedDateLessThanEqual() {
+        chatRoomRepository.findAll().stream().forEach((chatRoom -> {
+            if (chatRoom.getExpiryDate().isBefore(now()) && chatRoom.getCount() == 0) {
+                chatRoomRepository.deleteById(chatRoom.getId());
             }
-        }
-
+        }));
     }
 
+    public void enter(String id) {
+        ChatRoom chatRoom = chatRoomRepository.findById(id).orElseThrow(() -> new CustomException(NOT_FOUND_CHAT_ROOM));
+        chatRoom.enter();
+    }
+
+    public void exit(String id) {
+        ChatRoom chatRoom = chatRoomRepository.findById(id).orElseThrow(() -> new CustomException(NOT_FOUND_CHAT_ROOM));
+        chatRoom.exit();
+    }
 }

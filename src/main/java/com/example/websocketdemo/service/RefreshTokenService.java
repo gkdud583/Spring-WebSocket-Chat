@@ -1,18 +1,15 @@
 package com.example.websocketdemo.service;
 
-import com.example.websocketdemo.entity.RefreshTokenInfo;
-import com.example.websocketdemo.model.RefreshToken;
+import com.example.websocketdemo.entity.RefreshToken;
+import com.example.websocketdemo.exception.CustomException;
 import com.example.websocketdemo.repository.RefreshTokenRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import static com.example.websocketdemo.exception.ErrorCode.NOT_FOUND_REFRESH_TOKEN;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-@Transactional
 @Service
+@Transactional
 public class RefreshTokenService {
-
 
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -20,28 +17,19 @@ public class RefreshTokenService {
         this.refreshTokenRepository = refreshTokenRepository;
     }
 
-    public String createRefreshToken(RefreshToken refreshToken){
-        refreshTokenRepository.save(new RefreshTokenInfo(refreshToken.getEmail(), refreshToken.getToken(), refreshToken.getExpiryDate()));
-        return refreshToken.getToken();
+    public void save(String token) {
+        refreshTokenRepository.save(new RefreshToken(token));
     }
 
-
-    public RefreshToken findByToken(String token){
-        Optional<RefreshTokenInfo> findTokenInfo = refreshTokenRepository.findByToken(token);
-        if(findTokenInfo.isPresent()){
-
-            RefreshToken findToken = new RefreshToken(findTokenInfo.get().getEmail(), findTokenInfo.get().getToken(), findTokenInfo.get().getExpiryDate());
-            return findToken;
-        }else{
-            return null;
-        }
-    }
-    public boolean verifyExpiration(RefreshToken token){
-        if(token.getExpiryDate().isBefore(LocalDateTime.now())) {
-            refreshTokenRepository.deleteByToken(token.getToken());
-            return false;
-        }
-        return true;
+    public boolean existsByToken(String token) {
+        return refreshTokenRepository.existsByToken(token);
     }
 
+    public RefreshToken findByToken(String token) {
+        return refreshTokenRepository.findByToken(token).orElseThrow(() -> new CustomException(NOT_FOUND_REFRESH_TOKEN));
+    }
+
+    public void deleteByToken(String token) {
+        refreshTokenRepository.deleteByToken(token);
+    }
 }
