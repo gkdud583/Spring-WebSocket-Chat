@@ -16,25 +16,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthChannelInterceptor implements ChannelInterceptor {
 
-
     @Autowired
     JwtTokenProvider jwtTokenProvider;
+
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-        if(accessor.getCommand() == StompCommand.CONNECT){
+        if (accessor.getCommand() == StompCommand.CONNECT) {
             String accessToken = accessor.getFirstNativeHeader("Authorization");
-            if(accessToken != null && jwtTokenProvider.validateToken(accessToken)) {
+            if (accessToken != null && jwtTokenProvider.validateToken(accessToken)) {
                 Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-//                accessor.setUser(authentication);
-
-            }else {
+            } else {
                 throw new AuthenticationCredentialsNotFoundException("AccessToken is null or not valid");
             }
         }
         return message;
-
     }
 }
