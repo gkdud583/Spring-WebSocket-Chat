@@ -1,13 +1,12 @@
 package com.example.websocketdemo.filter;
 
-import com.example.websocketdemo.authentication.RefreshAuthToken;
-import com.example.websocketdemo.model.RefreshToken;
+import com.example.websocketdemo.authentication.JwtAuthenticationToken;
+import com.example.websocketdemo.entity.RefreshToken;
 import com.example.websocketdemo.provider.JwtTokenProvider;
 import com.example.websocketdemo.service.RefreshTokenService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -16,15 +15,14 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
-    private final RefreshTokenService refreshTokenService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenService refreshTokenService;
 
-    public JwtAuthenticationFilter(RefreshTokenService refreshTokenService, JwtTokenProvider jwtTokenProvider) {
-        this.refreshTokenService = refreshTokenService;
+    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, RefreshTokenService refreshTokenService) {
         this.jwtTokenProvider = jwtTokenProvider;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
@@ -41,17 +39,18 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
-        //login -> chatRoomList redirect시, refreshToken으로 접근가능하도록 하기 위함.
-        if (((HttpServletRequest) request).getRequestURI().equals("/chatRoomList")) {
+        // login -> chatRoomList redirect시, refreshToken으로 접근가능하도록 하기 위함.
+        else {
             Cookie[] cookies = ((HttpServletRequest) request).getCookies();
             if (cookies != null) {
+
                 for (Cookie cookie : cookies) {
                     if (cookie.getName().equals("refreshToken")) {
                         RefreshToken refreshToken = refreshTokenService.findByToken(cookie.getValue());
-                        if (refreshToken != null && refreshTokenService.verifyExpiration(refreshToken)) {
-                            RefreshAuthToken refreshAuthToken = new RefreshAuthToken();
-                            refreshAuthToken.setAuthenticated(true);
-                            SecurityContextHolder.getContext().setAuthentication(refreshAuthToken);
+                        if (refreshToken != null && jwtTokenProvider.validateToken(refreshToken.getToken())) {
+
+                            Authentication authentication = new JwtAuthenticationToken(null, null);
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
                             break;
                         }
                     }
