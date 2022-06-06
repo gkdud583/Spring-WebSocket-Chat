@@ -1,7 +1,6 @@
 package com.example.websocketdemo.controller;
 
 import com.example.websocketdemo.model.ChatMessage;
-import com.example.websocketdemo.model.ChatRoom;
 import com.example.websocketdemo.service.ChatRoomService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -22,40 +21,20 @@ public class ChatController {
     }
 
     @MessageMapping("/{chatRoomId}/chat.sendMessage")
-    public void sendMessage(@Payload ChatMessage chatMessage,
-                            @DestinationVariable String chatRoomId
-    ) {
-        template.convertAndSend("/topic/chat/"+chatRoomId, chatMessage);
+    public void sendMessage(@Payload ChatMessage chatMessage, @DestinationVariable String chatRoomId) {
+        template.convertAndSend("/topic/chat/" + chatRoomId, chatMessage);
     }
 
     @MessageMapping("/{chatRoomId}/chat.addUser")
-    public void addUser(
-                               @DestinationVariable String chatRoomId,
-                               @Payload ChatMessage chatMessage,
-                               SimpMessageHeaderAccessor headerAccessor
-                               ) {
-
-
+    public void addUser(@DestinationVariable String chatRoomId, @Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
 
         //채팅방 인원 추가
-        ChatRoom oldChatRoom = chatRoomService.findById(chatRoomId);
-        oldChatRoom.addCount();
-        ChatRoom chatRoom = new ChatRoom(oldChatRoom.getName(), oldChatRoom.getName(), oldChatRoom.getCount(), oldChatRoom.getExpiryDate());
-        chatRoomService.save(chatRoom);
+        chatRoomService.enter(chatRoomId);
 
         // 구독한 채팅방에 입장 메시지 보내기
         headerAccessor.getSessionAttributes().put("chatRoomId", chatRoomId);
         headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
 
-        template.convertAndSend("/topic/chat/"+chatRoomId, chatMessage);
-
-
-
-
-
-
-
-
+        template.convertAndSend("/topic/chat/" + chatRoomId, chatMessage);
     }
-
 }
