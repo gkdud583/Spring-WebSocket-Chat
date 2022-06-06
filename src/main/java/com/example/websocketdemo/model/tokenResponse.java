@@ -2,12 +2,12 @@ package com.example.websocketdemo.model;
 
 import java.time.LocalDateTime;
 
-public class ResponseToken {
+public class tokenResponse {
     private String accessToken;
 
     private LocalDateTime expiryDate;
 
-    public ResponseToken(String accessToken, LocalDateTime expiryDate) {
+    public tokenResponse(String accessToken, LocalDateTime expiryDate) {
         this.accessToken = accessToken;
         this.expiryDate = expiryDate;
     }

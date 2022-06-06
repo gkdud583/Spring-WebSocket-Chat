@@ -1,6 +1,5 @@
 package com.example.websocketdemo.model;
 
-
 public class ChatMessage {
     private MessageType type;
     private String content;
@@ -9,11 +8,7 @@ public class ChatMessage {
 
 
     public enum MessageType {
-        CHAT,
-        JOIN,
-        LEAVE,
-        ERROR,
-
+        CHAT, JOIN, LEAVE, ERROR,
     }
 
     public String getEmail() {
@@ -50,11 +45,6 @@ public class ChatMessage {
 
     @Override
     public String toString() {
-        return "ChatMessage{" +
-                "type=" + type +
-                ", content='" + content + '\'' +
-                ", sender='" + sender + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+        return "ChatMessage{" + "type=" + type + ", content='" + content + '\'' + ", sender='" + sender + '\'' + ", email='" + email + '\'' + '}';
     }
 }

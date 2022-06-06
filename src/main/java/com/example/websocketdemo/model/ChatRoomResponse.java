@@ -1,7 +1,6 @@
 package com.example.websocketdemo.model;
 
 import com.example.websocketdemo.entity.ChatRoom;
-
 import java.time.LocalDateTime;
 
 public class ChatRoomResponse {
