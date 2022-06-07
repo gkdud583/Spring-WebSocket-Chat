@@ -12,7 +12,7 @@ var colors = [
 
 
 function login(){
-    window.location.href = '/login';
+    window.location.href = '/api/v1/users/login';
 }
 function join(){
     window.location.href = '/join';
