@@ -3,6 +3,7 @@ package com.example.websocketdemo.controller;
 import com.example.websocketdemo.entity.RefreshToken;
 import com.example.websocketdemo.entity.User;
 import com.example.websocketdemo.exception.CustomException;
+import com.example.websocketdemo.service.dto.UserLoginRequest;
 import com.example.websocketdemo.service.dto.UserSaveRequest;
 import com.example.websocketdemo.jwt.JwtTokenProvider;
 import com.example.websocketdemo.service.RefreshTokenService;
@@ -11,11 +12,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -90,6 +95,65 @@ public class UserControllerTest {
         verify(userService).save(anyString(), anyString());
     }
 
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {" "})
+    @WithMockUser
+    void signupFailWithEmailIsNullOrBlack(String email) throws Exception {
+        //given
+        UserSaveRequest userSaveRequest = new UserSaveRequest(email, request.getPassword());
+
+        //when, then
+        MvcResult mvcResult = mvc.perform(post(SIGNUP_URL)
+                                 .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                 .contentType(APPLICATION_JSON)
+                                 .content(toJson(userSaveRequest)))
+                                 .andReturn();
+
+        //then
+        assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(mvcResult.getResolvedException().getMessage()).contains("이메일은 필수 입력 값입니다.");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"12312312", "test", "@test.com", "test.com@"})
+    @WithMockUser
+    void signupFailWithInvalidEmail(String email) throws Exception {
+        //given
+        UserSaveRequest userSaveRequest = new UserSaveRequest(email, request.getPassword());
+
+        //when, then
+        MvcResult mvcResult = mvc.perform(post(SIGNUP_URL)
+                                 .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                 .contentType(APPLICATION_JSON)
+                                 .content(toJson(userSaveRequest)))
+                                 .andReturn();
+
+        //then
+        assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(mvcResult.getResolvedException().getMessage()).contains("이메일 값이 올바르지 않습니다.");
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {" "})
+    @WithMockUser
+    void signupFailWithPasswordIsNullOrBlack(String password) throws Exception {
+        //given
+        UserSaveRequest userSaveRequest = new UserSaveRequest(request.getEmail(), password);
+
+        //when, then
+        MvcResult mvcResult = mvc.perform(post(SIGNUP_URL)
+                                 .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                 .contentType(APPLICATION_JSON)
+                                 .content(toJson(userSaveRequest)))
+                                 .andReturn();
+
+        //then
+        assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(mvcResult.getResolvedException().getMessage()).contains("비밀번호는 필수 입력 값입니다.");
+    }
+
     @Test
     @WithMockUser
     void signupFailByDuplicatedEmail() throws Exception {
@@ -149,13 +213,78 @@ public class UserControllerTest {
            .andExpect(status().isUnauthorized());
     }
 
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {" "})
+    @WithMockUser
+    void loginFailWithEmailIsNullOrBlack(String email) throws Exception {
+        //given
+        UserLoginRequest userLoginRequest = new UserLoginRequest(email, request.getPassword());
+
+        //when, then
+        MvcResult mvcResult = mvc.perform(post(LOGIN_URL)
+                                 .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                 .requestAttr("HttpServletRequest", req)
+                                 .requestAttr("HttpServletResponse", res)
+                                 .contentType(APPLICATION_JSON)
+                                 .content(toJson(userLoginRequest)))
+                                 .andReturn();
+
+        //then
+        assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(mvcResult.getResolvedException().getMessage()).contains("이메일은 필수 입력 값입니다.");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"12312312", "test", "@test.com", "test.com@"})
+    @WithMockUser
+    void loginFailWithInvalidEmail(String email) throws Exception {
+        //given
+        UserLoginRequest userLoginRequest = new UserLoginRequest(email, request.getPassword());
+
+        //when, then
+        MvcResult mvcResult = mvc.perform(post(LOGIN_URL)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .requestAttr("HttpServletRequest", req)
+                        .requestAttr("HttpServletResponse", res)
+                        .contentType(APPLICATION_JSON)
+                        .content(toJson(userLoginRequest)))
+                .andReturn();
+
+        //then
+        assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(mvcResult.getResolvedException().getMessage()).contains("이메일 값이 올바르지 않습니다.");
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {" "})
+    @WithMockUser
+    void loginFailWithPasswordIsNullOrBlack(String password) throws Exception {
+        //given
+        UserLoginRequest userLoginRequest = new UserLoginRequest(request.getEmail(), password);
+
+        //when, then
+        MvcResult mvcResult = mvc.perform(post(LOGIN_URL)
+                                 .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                 .requestAttr("HttpServletRequest", req)
+                                 .requestAttr("HttpServletResponse", res)
+                                 .contentType(APPLICATION_JSON)
+                                 .content(toJson(userLoginRequest)))
+                                 .andReturn();
+
+        //then
+        assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(mvcResult.getResolvedException().getMessage()).contains("비밀번호는 필수 입력 값입니다.");
+    }
+
     @Test
     @WithMockUser
     void loginPageAfterLogin() throws Exception {
         //given
         String redirectLocation = "/chatRoomList";
         given(refreshTokenService.existsByToken(anyString()))
-                .willReturn(false);
+                .willReturn(true);
 
         //when
         MvcResult mvcResult = mvc.perform(get(LOGIN_URL)
@@ -172,9 +301,9 @@ public class UserControllerTest {
     @WithMockUser
     void loginPageBeforeLogin() throws Exception {
         //given
-        String viewName = "redirect:/chatRoomList";
-        given(refreshTokenService.findByToken(anyString()))
-                .willThrow(new CustomException(NOT_FOUND_REFRESH_TOKEN));
+        String viewName = "login";
+        given(refreshTokenService.existsByToken(anyString()))
+                .willReturn(false);
 
         //when
         MvcResult mvcResult = mvc.perform(get(LOGIN_URL)
@@ -183,7 +312,7 @@ public class UserControllerTest {
                                  .andReturn();
 
         //then
-        assertThat(mvcResult.getResponse().getStatus()).isEqualTo(FOUND.value());
+        assertThat(mvcResult.getResponse().getStatus()).isEqualTo(OK.value());
         assertThat(mvcResult.getModelAndView().getViewName()).isEqualTo(viewName);
     }
 
@@ -194,7 +323,7 @@ public class UserControllerTest {
         String redirectLocation = "/login";
 
         //when
-        MvcResult mvcResult = mvc.perform(get(LOGOUT_URL)
+        MvcResult mvcResult = mvc.perform(post(LOGOUT_URL)
                                  .with(SecurityMockMvcRequestPostProcessors.csrf())
                                  .cookie(new Cookie("refreshToken", "test")))
                                  .andReturn();

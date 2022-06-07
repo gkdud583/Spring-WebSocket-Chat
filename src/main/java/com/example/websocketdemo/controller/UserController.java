@@ -4,6 +4,7 @@ import com.example.websocketdemo.entity.RefreshToken;
 import com.example.websocketdemo.entity.User;
 import com.example.websocketdemo.exception.CustomException;
 import com.example.websocketdemo.service.dto.TokenResponse;
+import com.example.websocketdemo.service.dto.UserLoginRequest;
 import com.example.websocketdemo.service.dto.UserSaveRequest;
 import com.example.websocketdemo.jwt.JwtTokenProvider;
 import com.example.websocketdemo.service.RefreshTokenService;
@@ -49,7 +50,7 @@ public class UserController {
 
     @PostMapping("/login")
     @ResponseBody
-    public ResponseEntity login(HttpServletResponse response, @RequestBody @Valid UserSaveRequest request) {
+    public ResponseEntity login(HttpServletResponse response, @RequestBody @Valid UserLoginRequest request) {
         userService.login(request.getEmail(), request.getPassword());
 
         User user = userService.findByEmail(request.getEmail());
