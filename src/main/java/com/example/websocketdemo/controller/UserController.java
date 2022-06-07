@@ -42,11 +42,10 @@ public class UserController {
     @GetMapping("/login")
     public String showLoginForm(@CookieValue(name = "refreshToken", required = false) String refreshToken) {
         if (!refreshTokenService.existsByToken(refreshToken)) {
-            return "redirect:/chatRoomList";
+            return "login";
         }
-        return "login";
+        return "redirect:/chatRoomList";
     }
-
 
     @PostMapping("/login")
     @ResponseBody

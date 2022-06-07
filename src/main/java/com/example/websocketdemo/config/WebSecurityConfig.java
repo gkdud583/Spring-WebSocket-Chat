@@ -33,7 +33,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(HttpMethod.POST, "/api/v1/users/**");
-        web.ignoring().antMatchers("/ws/**", "/", "/join", "/login", "/js/**", "/css/**", "/error", "/h2-console/**");
+        web.ignoring().antMatchers(HttpMethod.GET, "/api/v1/users/**");
+        web.ignoring().antMatchers("/ws/**", "/", "/join", "/chatRoomList", "/js/**", "/css/**", "/error", "/h2-console/**");
     }
 
 
