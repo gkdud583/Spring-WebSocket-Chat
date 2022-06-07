@@ -1,13 +1,13 @@
-package com.example.websocketdemo.model;
+package com.example.websocketdemo.service.dto;
 
 import java.time.LocalDateTime;
 
-public class tokenResponse {
+public class TokenResponse {
     private String accessToken;
 
     private LocalDateTime expiryDate;
 
-    public tokenResponse(String accessToken, LocalDateTime expiryDate) {
+    public TokenResponse(String accessToken, LocalDateTime expiryDate) {
         this.accessToken = accessToken;
         this.expiryDate = expiryDate;
     }

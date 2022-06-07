@@ -1,4 +1,4 @@
-package com.example.websocketdemo.model;
+package com.example.websocketdemo.service.dto;
 
 public class UserSaveRequest {
     private final String email;

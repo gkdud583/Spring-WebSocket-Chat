@@ -1,6 +1,6 @@
 package com.example.websocketdemo.controller;
 
-import com.example.websocketdemo.model.ChatRoomResponse;
+import com.example.websocketdemo.service.dto.ChatRoomResponse;
 import com.example.websocketdemo.service.ChatRoomService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

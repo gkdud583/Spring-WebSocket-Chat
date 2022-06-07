@@ -1,6 +1,6 @@
 package com.example.websocketdemo.listener;
 
-import com.example.websocketdemo.model.ChatMessage;
+import com.example.websocketdemo.service.dto.ChatMessage;
 import com.example.websocketdemo.service.ChatRoomService;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;

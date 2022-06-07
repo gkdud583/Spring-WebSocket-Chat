@@ -1,4 +1,4 @@
-package com.example.websocketdemo.model;
+package com.example.websocketdemo.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 

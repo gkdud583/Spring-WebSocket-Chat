@@ -1,6 +1,6 @@
 package com.example.websocketdemo.controller;
 
-import com.example.websocketdemo.model.ChatMessage;
+import com.example.websocketdemo.service.dto.ChatMessage;
 import com.example.websocketdemo.service.ChatRoomService;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;

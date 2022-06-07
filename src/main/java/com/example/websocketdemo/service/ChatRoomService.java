@@ -3,7 +3,7 @@ package com.example.websocketdemo.service;
 
 import com.example.websocketdemo.entity.ChatRoom;
 import com.example.websocketdemo.exception.CustomException;
-import com.example.websocketdemo.model.ChatRoomResponse;
+import com.example.websocketdemo.service.dto.ChatRoomResponse;
 import com.example.websocketdemo.repository.ChatRoomRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

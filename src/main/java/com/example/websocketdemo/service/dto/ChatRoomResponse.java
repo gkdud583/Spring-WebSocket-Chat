@@ -1,4 +1,4 @@
-package com.example.websocketdemo.model;
+package com.example.websocketdemo.service.dto;
 
 import com.example.websocketdemo.entity.ChatRoom;
 import java.time.LocalDateTime;
@@ -16,7 +16,8 @@ public class ChatRoomResponse {
         this.expiryDate = chatRoom.getExpiryDate();
     }
 
-    public String getRoomId() {
+
+    public String getId() {
         return id;
     }
 
