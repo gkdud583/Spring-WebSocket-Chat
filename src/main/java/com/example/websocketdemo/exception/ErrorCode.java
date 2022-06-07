@@ -5,6 +5,9 @@ import static org.springframework.http.HttpStatus.*;
 
 public enum ErrorCode {
     /* 400 BAD_REQUEST : 잘못된 요청 */
+    INVALID_EMAIL(BAD_REQUEST, "유효하지 않은 email 입니다."),
+    INVALID_PASSWORD(BAD_REQUEST, "유효하지 않은 password 입니다."),
+    INVALID_ID(BAD_REQUEST, "유효하지 않은 id 입니다."),
     INVALID_TOKEN(BAD_REQUEST, "유효하지 않은 token 입니다."),
     INVALID_REFRESH_TOKEN(BAD_REQUEST, "유효하지 않은 refresh token 입니다."),
     INVALID_CHAT_ROOM_NAME(BAD_REQUEST, "유효하지 않은 채팅방 이름입니다."),

@@ -19,14 +19,19 @@ public class UserService {
     }
 
     public User findById(String id) {
+        validateId(id);
         return userRepository.findById(id).orElseThrow(() -> new CustomException(NOT_FOUND_USER));
     }
 
     public User findByEmail(String email) {
+        validateEmail(email);
         return userRepository.findByEmail(email).orElseThrow(() -> new CustomException(NOT_FOUND_USER));
     }
 
     public void save(String email, String password) {
+        validateEmail(email);
+        validatePassword(password);
+
         if (userRepository.existsByEmail(email)) {
             throw new CustomException(DUPLICATE_ACCOUNT);
         }
@@ -34,6 +39,9 @@ public class UserService {
     }
 
     public void login(String email, String password) {
+        validateEmail(email);
+        validatePassword(password);
+
         userRepository.findByEmail(email).ifPresentOrElse((foundUser) -> {
             if (!encoder.matches(password, foundUser.getPassword())) {
                 throw new CustomException(UNAUTHENTICATED_USER);
@@ -41,5 +49,30 @@ public class UserService {
         }, () -> {
             throw new CustomException(NOT_FOUND_USER);
         });
+    }
+
+    private void validateId(String id) {
+        if (!isValid(id)) {
+            throw new CustomException(INVALID_ID);
+        }
+    }
+
+    private void validateEmail(String email) {
+        if (!isValid(email)) {
+            throw new CustomException(INVALID_EMAIL);
+        }
+    }
+
+    private void validatePassword(String password) {
+        if (!isValid(password)) {
+            throw new CustomException(INVALID_PASSWORD);
+        }
+    }
+
+    private boolean isValid(String input) {
+        if (input == null || input.isBlank()) {
+            return false;
+        }
+        return true;
     }
 }
