@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import javax.annotation.PostConstruct;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -99,13 +98,5 @@ public class UserController {
         LocalDateTime expiration = jwtTokenProvider.getTokenExpiration(accessToken);
         TokenResponse responseToken = new TokenResponse(accessToken, expiration);
         return new ResponseEntity<>(responseToken, HttpStatus.OK);
-    }
-
-
-    //테스트용 데이터 추가
-    @PostConstruct
-    public void init() {
-        userService.save("test@naver.com", "zns9dyek951956");
-        userService.save("test2@naver.com", "zns9dyek951956");
     }
 }
