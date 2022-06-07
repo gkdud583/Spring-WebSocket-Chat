@@ -43,7 +43,7 @@ public class UserService {
         validatePassword(password);
 
         userRepository.findByEmail(email).ifPresentOrElse((foundUser) -> {
-            if (!encoder.matches(password, foundUser.getPassword())) {
+            if (!foundUser.isSamePassword(encoder, password)) {
                 throw new CustomException(UNAUTHENTICATED_USER);
             }
         }, () -> {

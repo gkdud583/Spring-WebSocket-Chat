@@ -1,5 +1,6 @@
 package com.example.websocketdemo.entity;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import javax.persistence.*;
 import java.util.*;
 
@@ -26,9 +27,8 @@ public class User {
         return id;
     }
 
-
-    public String getPassword() {
-        return password;
+    public boolean isSamePassword(BCryptPasswordEncoder encoder, String password) {
+        return encoder.matches(password, this.password);
     }
 
     @Override
