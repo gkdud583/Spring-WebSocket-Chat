@@ -3,7 +3,9 @@
 
 # Chatting Application 
 스프링 웹소켓(STOMP & SockJS)을 이용한 채팅 어플리케이션 오픈소스에 로그인, 회원가입, 단체 채팅 등의 기능을 추가하였습니다.<br><br><br>
-![Hnet-image](https://user-images.githubusercontent.com/60775067/172276778-5ae1efe6-8892-4260-9e80-eb03e49a184a.gif)
+
+![Hnet-image (2)](https://user-images.githubusercontent.com/60775067/172282991-fbdd843b-c1d9-4b0c-8eed-693f6d45fd5f.gif)
+
 
 # 👀👇
 https://chatting-app-side-project.herokuapp.com/
