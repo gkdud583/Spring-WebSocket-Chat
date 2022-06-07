@@ -17,6 +17,7 @@ import java.io.IOException;
 
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
+    private static final String REFRESH_TOKEN_AUTHENTICATION_URI = "/chatRoomList";
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
 
@@ -41,17 +42,17 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
         // login -> chatRoomList redirect시, refreshToken으로 접근가능하도록 하기 위함.
         else {
-            Cookie[] cookies = ((HttpServletRequest) request).getCookies();
-            if (cookies != null) {
-
-                for (Cookie cookie : cookies) {
-                    if (cookie.getName().equals("refreshToken")) {
-                        RefreshToken refreshToken = refreshTokenService.findByToken(cookie.getValue());
-                        if (refreshToken != null && jwtTokenProvider.validateToken(refreshToken.getToken())) {
-
-                            Authentication authentication = new JwtAuthenticationToken(null, null);
-                            SecurityContextHolder.getContext().setAuthentication(authentication);
-                            break;
+            if (((HttpServletRequest) request).getRequestURI().equals(REFRESH_TOKEN_AUTHENTICATION_URI)) {
+                Cookie[] cookies = ((HttpServletRequest) request).getCookies();
+                if (cookies != null) {
+                    for (Cookie cookie : cookies) {
+                        if (cookie.getName().equals("refreshToken")) {
+                            RefreshToken refreshToken = refreshTokenService.findByToken(cookie.getValue());
+                            if (refreshToken != null && jwtTokenProvider.validateToken(refreshToken.getToken())) {
+                                Authentication authentication = new JwtAuthenticationToken(null, null);
+                                SecurityContextHolder.getContext().setAuthentication(authentication);
+                                break;
+                            }
                         }
                     }
                 }
