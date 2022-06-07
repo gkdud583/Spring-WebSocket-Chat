@@ -100,6 +100,7 @@ public class ChatRoomControllerTest {
 
     @ParameterizedTest
     @NullAndEmptySource
+    @ValueSource(strings = {" "})
     @WithMockUser
     void addChatRoomFailWithChatRoomNameIsBlankOrNull(String name) throws Exception {
         //given
