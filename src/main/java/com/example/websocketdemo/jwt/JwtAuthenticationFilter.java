@@ -12,6 +12,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Optional;
 
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
@@ -41,21 +43,27 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         // login -> chatRoomList redirect시, refreshToken으로 접근가능하도록 하기 위함.
         else {
             if (((HttpServletRequest) request).getRequestURI().equals(REFRESH_TOKEN_AUTHENTICATION_URI)) {
-                Cookie[] cookies = ((HttpServletRequest) request).getCookies();
-                if (cookies != null) {
-                    for (Cookie cookie : cookies) {
-                        if (cookie.getName().equals("refreshToken")) {
-                            RefreshToken refreshToken = refreshTokenService.findByToken(cookie.getValue());
-                            if (refreshToken != null && jwtTokenProvider.validateToken(refreshToken.getToken())) {
-                                Authentication authentication = new JwtAuthenticationToken(null, null);
-                                SecurityContextHolder.getContext().setAuthentication(authentication);
-                                break;
-                            }
-                        }
+                getRefreshTokenCookie(request).ifPresent((cookie) -> {
+                    RefreshToken refreshToken = refreshTokenService.findByToken(cookie.getValue());
+                    if (refreshToken != null && jwtTokenProvider.validateToken(refreshToken.getToken())) {
+                        Authentication authentication = new JwtAuthenticationToken(null, null);
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
-                }
+                });
             }
         }
         chain.doFilter(request, response);
+    }
+
+    private Optional<Cookie> getRefreshTokenCookie(ServletRequest request) {
+        Cookie[] cookies = ((HttpServletRequest) request).getCookies();
+        if (cookies == null) {
+            return Optional.empty();
+        }
+
+        return Arrays.stream(cookies).filter((cookie) ->
+                        cookie.getName().equals("refreshToken")
+                )
+                .findFirst();
     }
 }
