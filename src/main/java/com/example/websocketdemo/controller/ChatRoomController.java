@@ -2,6 +2,7 @@ package com.example.websocketdemo.controller;
 
 import com.example.websocketdemo.service.dto.ChatRoomResponse;
 import com.example.websocketdemo.service.ChatRoomService;
+import com.example.websocketdemo.service.dto.ChatRoomSaveRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
@@ -24,8 +25,8 @@ public class ChatRoomController {
 
     @PostMapping
     @ResponseBody
-    public void addChatRoom(String name) {
-        chatRoomService.save(name);
+    public void addChatRoom(@RequestBody ChatRoomSaveRequest chatRoomSaveRequest) {
+        chatRoomService.save(chatRoomSaveRequest.getName());
     }
 
     //테스트용 데이터 추가
