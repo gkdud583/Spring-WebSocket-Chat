@@ -26,10 +26,6 @@ public class UserService {
         return userRepository.findByEmail(email).orElseThrow(() -> new CustomException(NOT_FOUND_USER));
     }
 
-    public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
-    }
-
     public void save(String email, String password) {
         if (userRepository.existsByEmail(email)) {
             throw new CustomException(DUPLICATE_ACCOUNT);
