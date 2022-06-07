@@ -1,4 +1,4 @@
-package com.example.websocketdemo.authentication;
+package com.example.websocketdemo.jwt;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 

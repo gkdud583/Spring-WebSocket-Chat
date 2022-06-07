@@ -3,9 +3,9 @@ package com.example.websocketdemo.controller;
 import com.example.websocketdemo.entity.RefreshToken;
 import com.example.websocketdemo.entity.User;
 import com.example.websocketdemo.exception.CustomException;
-import com.example.websocketdemo.model.tokenResponse;
+import com.example.websocketdemo.model.TokenResponse;
 import com.example.websocketdemo.model.UserSaveRequest;
-import com.example.websocketdemo.provider.JwtTokenProvider;
+import com.example.websocketdemo.jwt.JwtTokenProvider;
 import com.example.websocketdemo.service.RefreshTokenService;
 import com.example.websocketdemo.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -75,7 +75,7 @@ public class UserController {
 
         response.addCookie(refreshTokenCookie);
 
-        tokenResponse responseToken = new tokenResponse(accessToken, expiration);
+        TokenResponse responseToken = new TokenResponse(accessToken, expiration);
         return new ResponseEntity<>(responseToken, HttpStatus.OK);
     }
 
@@ -97,7 +97,7 @@ public class UserController {
         }
         String accessToken = jwtTokenProvider.createAccessToken(jwtTokenProvider.getId(foundRefreshToken.getToken()));
         LocalDateTime expiration = jwtTokenProvider.getTokenExpiration(accessToken);
-        tokenResponse responseToken = new tokenResponse(accessToken, expiration);
+        TokenResponse responseToken = new TokenResponse(accessToken, expiration);
         return new ResponseEntity<>(responseToken, HttpStatus.OK);
     }
 

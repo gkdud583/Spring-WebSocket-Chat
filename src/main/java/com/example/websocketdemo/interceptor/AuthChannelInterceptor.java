@@ -1,6 +1,6 @@
 package com.example.websocketdemo.interceptor;
 
-import com.example.websocketdemo.provider.JwtTokenProvider;
+import com.example.websocketdemo.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;

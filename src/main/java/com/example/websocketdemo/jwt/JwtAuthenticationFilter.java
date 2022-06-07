@@ -1,8 +1,6 @@
-package com.example.websocketdemo.filter;
+package com.example.websocketdemo.jwt;
 
-import com.example.websocketdemo.authentication.JwtAuthenticationToken;
 import com.example.websocketdemo.entity.RefreshToken;
-import com.example.websocketdemo.provider.JwtTokenProvider;
 import com.example.websocketdemo.service.RefreshTokenService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

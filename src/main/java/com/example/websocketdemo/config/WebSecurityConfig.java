@@ -1,8 +1,8 @@
 package com.example.websocketdemo.config;
 
 import com.example.websocketdemo.exception.AuthEntryPointJwt;
-import com.example.websocketdemo.filter.JwtAuthenticationFilter;
-import com.example.websocketdemo.provider.JwtTokenProvider;
+import com.example.websocketdemo.jwt.JwtAuthenticationFilter;
+import com.example.websocketdemo.jwt.JwtTokenProvider;
 import com.example.websocketdemo.service.RefreshTokenService;
 import com.example.websocketdemo.service.UserService;
 import org.springframework.context.annotation.Bean;

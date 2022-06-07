@@ -1,6 +1,5 @@
-package com.example.websocketdemo.provider;
+package com.example.websocketdemo.jwt;
 
-import com.example.websocketdemo.jwt.JwtAuthenticationToken;
 import com.example.websocketdemo.entity.User;
 import com.example.websocketdemo.exception.CustomException;
 import com.example.websocketdemo.service.UserService;
