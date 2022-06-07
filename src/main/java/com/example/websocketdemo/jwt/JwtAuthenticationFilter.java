@@ -61,9 +61,9 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             return Optional.empty();
         }
 
-        return Arrays.stream(cookies).filter((cookie) ->
+        return Arrays.stream(cookies)
+                .filter((cookie) ->
                         cookie.getName().equals("refreshToken")
-                )
-                .findFirst();
+                ).findFirst();
     }
 }
