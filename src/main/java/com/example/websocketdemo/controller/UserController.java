@@ -79,7 +79,7 @@ public class UserController {
         return new ResponseEntity<>(responseToken, HttpStatus.OK);
     }
 
-    @GetMapping("/logout")
+    @PostMapping("/logout")
     public String logout(@CookieValue(name = "refreshToken", required = false) String refreshToken) {
         refreshTokenService.deleteByToken(refreshToken);
         return "redirect:/login";
