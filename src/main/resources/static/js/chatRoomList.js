@@ -268,7 +268,7 @@ function refreshAccessToken(){
 
             } catch(err) {
                  //refreshToken 만료 혹은 삭제됨
-                 window.location.href = "/login";
+                 window.location.href = "/api/v1/users/login";
             }
 
             return  fetch("/api/v1/chatRooms",{

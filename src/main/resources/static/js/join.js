@@ -10,8 +10,11 @@ function join(){
     else{
             fetch('/api/v1/users/signup', {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 cache: 'no-cache',
-                body: new URLSearchParams({
+                body: JSON.stringify({
                     email: emailInput.value,
                     password: passwordInput.value
                 })
@@ -19,7 +22,7 @@ function join(){
             .then((response) => {
                 if(response.status === 200){
                     alert("가입 되었습니다!");
-                    window.location.href = "/login";
+                    window.location.href = "/api/v1/users/login";
                 }else if(response.status === 400){
                     alert("이미 가입된 이메일입니다!");
                 }
