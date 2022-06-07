@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import static com.example.websocketdemo.exception.ErrorCode.INVALID_REFRESH_TOKEN;
 
@@ -34,7 +35,7 @@ public class UserController {
     @PostMapping("/signup")
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public void signup(@RequestBody UserSaveRequest request) {
+    public void signup(@RequestBody @Valid UserSaveRequest request) {
         userService.save(request.getEmail(), request.getPassword());
     }
 
@@ -49,7 +50,7 @@ public class UserController {
 
     @PostMapping("/login")
     @ResponseBody
-    public ResponseEntity login(HttpServletResponse response, @RequestBody UserSaveRequest request) {
+    public ResponseEntity login(HttpServletResponse response, @RequestBody @Valid UserSaveRequest request) {
         userService.login(request.getEmail(), request.getPassword());
 
         User user = userService.findByEmail(request.getEmail());

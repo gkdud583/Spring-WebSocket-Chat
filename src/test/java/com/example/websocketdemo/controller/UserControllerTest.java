@@ -1,398 +1,280 @@
 package com.example.websocketdemo.controller;
 
-import com.example.websocketdemo.entity.UserInfo;
-import com.example.websocketdemo.model.RefreshToken;
-import com.example.websocketdemo.model.User;
-import com.example.websocketdemo.provider.JwtTokenProvider;
-import com.example.websocketdemo.repository.RefreshTokenRepository;
+import com.example.websocketdemo.entity.RefreshToken;
+import com.example.websocketdemo.entity.User;
+import com.example.websocketdemo.exception.CustomException;
+import com.example.websocketdemo.service.dto.UserSaveRequest;
+import com.example.websocketdemo.jwt.JwtTokenProvider;
 import com.example.websocketdemo.service.RefreshTokenService;
 import com.example.websocketdemo.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.thymeleaf.spring5.view.ThymeleafViewResolver;
-
 import javax.servlet.http.Cookie;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import java.time.LocalDateTime;
+import static com.example.websocketdemo.exception.ErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.verify;
+import static org.springframework.http.HttpStatus.FOUND;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(controllers = UserController.class,
+        excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+                                                classes = WebSecurityConfigurerAdapter.class),}
+)
 public class UserControllerTest {
+    @Autowired
     private MockMvc mvc;
 
-    @Mock
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
     private UserService userService;
 
-    @Mock
-    private RefreshTokenRepository refreshTokenRepository;
-
-    @Mock
+    @MockBean
     private RefreshTokenService refreshTokenService;
 
-    @Mock
+    @MockBean
     private JwtTokenProvider jwtTokenProvider;
 
-    @InjectMocks
-    private UserController userController;
-
-
-    private ObjectMapper mapper = new ObjectMapper();
-    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     private MockHttpServletRequest req;
     private MockHttpServletResponse res;
+
+    private User user = new User("test@naver.com", "test123456789");
+    private UserSaveRequest request = new UserSaveRequest("test@naver.com", "test123456789");
+    private final String BASE_URL = "/api/v1/users";
+    private final String SIGNUP_URL = BASE_URL + "/signup";
+    private final String LOGIN_URL = BASE_URL + "/login";
+    private final String LOGOUT_URL = BASE_URL + "/logout";
+    private final String REFRESH_TOKEN_URL = BASE_URL + "/refreshToken";
 
     @BeforeEach
     void setup() {
         req = new MockHttpServletRequest();
         res = new MockHttpServletResponse();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        ThymeleafViewResolver thymeleafViewResolver = new ThymeleafViewResolver();
-        thymeleafViewResolver.setTemplateEngine(new SpringTemplateEngine());
-        //MockMvc standalone approach
-        mvc = MockMvcBuilders.standaloneSetup(userController)
-                .setViewResolvers(thymeleafViewResolver)
-                .build();
     }
 
     @Test
+    @WithMockUser
     void signupSuccess() throws Exception {
         //given
-        given(userService.isExistEmail(anyString()))
-                .willReturn(false);
-        //when
-        ResultActions ra = mvc.perform(
-                post("/signup")
-                        .param("email", "test@naver.com")
-                        .param("password", "zns9dyek951956"));
-
+        //when, then
+        mvc.perform(post(SIGNUP_URL)
+           .with(SecurityMockMvcRequestPostProcessors.csrf())
+           .contentType(APPLICATION_JSON)
+           .content(toJson(request)))
+           .andExpect(status().isOk());
 
         //then
-        ra.andExpect(status().isOk());
-
-
+        verify(userService).save(anyString(), anyString());
     }
 
     @Test
+    @WithMockUser
     void signupFailByDuplicatedEmail() throws Exception {
         //given
-        given(userService.isExistEmail(anyString()))
-                .willReturn(true);
-        //when
-        ResultActions ra = mvc.perform(post("/signup")
-                .param("email", "test@naver.com")
-                .param("password", "zns9dyek951956"));
+        willThrow(new CustomException(DUPLICATE_ACCOUNT))
+                .given(userService).save(anyString(), anyString());
 
-
-        //then
-        ra.andExpect(status().isBadRequest());
-
+        //when, then
+        mvc.perform(post(SIGNUP_URL)
+           .with(SecurityMockMvcRequestPostProcessors.csrf())
+           .contentType(APPLICATION_JSON)
+           .content(toJson(request)))
+           .andExpect(status().isConflict());
     }
 
     @Test
+    @WithMockUser
     void loginSuccess() throws Exception {
         //given
-
-        User user = new User("test@naver.com", "zns9dyek951956");
-        given(userService.loadUserByUsername(anyString()))
-                .willReturn(
-                        UserInfo.builder()
-                                .email(user.getEmail())
-                                .auth(user.getAuth())
-                                .password(encoder.encode(user.getPassword())).build()
-                );
-        List<GrantedAuthority> roles = new ArrayList<>();
-        roles.add(new SimpleGrantedAuthority("ROLE_USER"));
-
-        given(jwtTokenProvider.createToken("test@naver.com", roles))
-                .willReturn("test");
-        given(jwtTokenProvider.getTokenExpiration("test"))
-                .willReturn(new Date());
-
-
-        given(refreshTokenService.createRefreshToken(any(RefreshToken.class)))
-                .willReturn(anyString());
-
+        given(userService.findByEmail(anyString()))
+                .willReturn(user);
+        given(jwtTokenProvider.createAccessToken(anyString()))
+                .willReturn("accessToken");
+        given(jwtTokenProvider.getTokenExpiration(anyString()))
+                .willReturn(LocalDateTime.now());
+        given(jwtTokenProvider.createRefreshToken(anyString()))
+                .willReturn("refreshToken");
 
         //when
-        ResultActions ra = mvc.perform(post("/login")
-                .requestAttr("HttpServletRequest", req)
-                .requestAttr("HttpServletResponse", res)
-                .param("email", user.getEmail())
-                .param("password", user.getPassword()));
-
+        MvcResult result = mvc.perform(post(LOGIN_URL)
+                              .with(SecurityMockMvcRequestPostProcessors.csrf())
+                              .requestAttr("HttpServletRequest", req)
+                              .requestAttr("HttpServletResponse", res)
+                              .contentType(APPLICATION_JSON)
+                              .content(toJson(request)))
+                              .andReturn();
 
         //then
-        MvcResult mvcResult = ra.andExpect(status().isOk()).andReturn();
-        assertThat(mvcResult.getResponse().getCookie("refreshToken")).isNotNull();
-        assertThat(mvcResult.getResponse().getContentAsString()).isNotNull();
-
+        assertThat(result.getResponse().getCookie("refreshToken")).isNotNull();
+        assertThat(result.getResponse().getContentAsString()).isNotNull();
     }
 
     @Test
+    @WithMockUser
     void loginFail() throws Exception {
         //given
+        willThrow(new CustomException(UNAUTHENTICATED_USER))
+                .given(userService).login(anyString(), anyString());
 
-        User user = new User("test@naver.com", "zns9dyek951956");
-
-        given(userService.loadUserByUsername(anyString()))
-                .willReturn(
-                        UserInfo.builder()
-                                .email("test@naver.com")
-                                .auth("ROLE_USER")
-                                .password(encoder.encode("zns9dyek951956@")).build()
-                );
-
-
-        //when
-        ResultActions ra = mvc.perform(post("/login")
-                .requestAttr("HttpServletRequest", req)
-                .requestAttr("HttpServletResponse", res)
-                .param("email", user.getEmail())
-                .param("password", user.getPassword()));
-
-
-        //then
-        ra.andExpect(status().isUnauthorized());
-
+        //when, then
+        mvc.perform(post(LOGIN_URL)
+           .with(SecurityMockMvcRequestPostProcessors.csrf())
+           .requestAttr("HttpServletRequest", req)
+           .requestAttr("HttpServletResponse", res)
+           .contentType(APPLICATION_JSON)
+           .content(toJson(request)))
+           .andExpect(status().isUnauthorized());
     }
 
     @Test
+    @WithMockUser
     void loginPageAfterLogin() throws Exception {
         //given
-        given(refreshTokenService.findByToken(anyString()))
-                .willReturn(RefreshToken.create("test@naver.com"));
-        given(refreshTokenService.verifyExpiration(any()))
-                .willReturn(true);
-
-        //when
-        ResultActions ra = mvc.perform(
-                get("/login")
-                        .cookie(new Cookie("refreshToken", "test")));
-
-        //then
-        MvcResult mvcResult = ra.andExpect(status().is3xxRedirection()).andReturn();
-        assertThat(mvcResult.getResponse().getRedirectedUrl()).isEqualTo("/chatRoomList");
-
-
-    }
-
-    @Test
-    void loginPageAfterRefreshTokenExpires() throws Exception {
-        //given
-        given(refreshTokenService.findByToken(anyString()))
-                .willReturn(RefreshToken.create("test@naver.com"));
-        given(refreshTokenService.verifyExpiration(any()))
+        String redirectLocation = "/chatRoomList";
+        given(refreshTokenService.existsByToken(anyString()))
                 .willReturn(false);
 
         //when
-        ResultActions ra = mvc.perform(
-                get("/login")
-                        .cookie(new Cookie("refreshToken", "test")));
+        MvcResult mvcResult = mvc.perform(get(LOGIN_URL)
+                                 .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                 .cookie(new Cookie("refreshToken", "test")))
+                                 .andReturn();
 
         //then
-        ra.andExpect(status().isOk());
-        ra.andExpect(view().name("login"));
-
-
+        assertThat(mvcResult.getResponse().getStatus()).isEqualTo(FOUND.value());
+        assertThat(mvcResult.getResponse().getRedirectedUrl()).isEqualTo(redirectLocation);
     }
 
     @Test
-    void loginPageAfterRefreshTokenDeleted() throws Exception {
-        //given
-        given(refreshTokenService.findByToken(anyString()))
-                .willReturn(null);
-
-        //when
-        ResultActions ra = mvc.perform(
-                get("/login")
-                        .cookie(new Cookie("refreshToken", "test")));
-
-        //then
-        ra.andExpect(status().isOk());
-        ra.andExpect(view().name("login"));
-
-
-    }
-
-    @Test
+    @WithMockUser
     void loginPageBeforeLogin() throws Exception {
         //given
-        given(refreshTokenService.findByToken(null))
-                .willReturn(null);
-
-        //when
-        ResultActions ra = mvc.perform(
-                get("/login"));
-
-
-        //then
-        ra.andExpect(status().isOk());
-        ra.andExpect(view().name("login"));
-
-
-    }
-
-    @Test
-    void logoutAfterRefreshToken() throws Exception {
-        //given
+        String viewName = "redirect:/chatRoomList";
         given(refreshTokenService.findByToken(anyString()))
-                .willReturn(RefreshToken.create("test@naver.com"));
+                .willThrow(new CustomException(NOT_FOUND_REFRESH_TOKEN));
 
         //when
-        ResultActions ra = mvc.perform(
-                get("/logout")
-                        .cookie(new Cookie("refreshToken", "test")));
+        MvcResult mvcResult = mvc.perform(get(LOGIN_URL)
+                                 .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                 .cookie(new Cookie("refreshToken", "test")))
+                                 .andReturn();
 
         //then
-        ra.andExpect(status().is3xxRedirection());
-
-
+        assertThat(mvcResult.getResponse().getStatus()).isEqualTo(FOUND.value());
+        assertThat(mvcResult.getModelAndView().getViewName()).isEqualTo(viewName);
     }
 
     @Test
-    void logoutWithRefreshToken() throws Exception {
+    @WithMockUser
+    void logoutSuccess() throws Exception {
         //given
-        given(refreshTokenService.findByToken(any()))
-                .willReturn(any(RefreshToken.class));
+        String redirectLocation = "/login";
 
         //when
-        ResultActions ra = mvc.perform(
-                get("/logout")
-                        .cookie(new Cookie("refreshToken", "test")));
+        MvcResult mvcResult = mvc.perform(get(LOGOUT_URL)
+                                 .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                 .cookie(new Cookie("refreshToken", "test")))
+                                 .andReturn();
 
         //then
-        ra.andExpect(status().is3xxRedirection());
-
-
+        assertThat(mvcResult.getResponse().getStatus()).isEqualTo(FOUND.value());
+        assertThat(mvcResult.getResponse().getRedirectedUrl()).isEqualTo(redirectLocation);
     }
 
     @Test
-    void logoutWithNoRefreshToken() throws Exception {
-        //given
-        given(refreshTokenService.findByToken(null))
-                .willReturn(null);
-
-        //when
-        ResultActions ra = mvc.perform(
-                get("/logout"));
-
-
-        //then
-        ra.andExpect(status().is3xxRedirection());
-
-
-    }
-
-    @Test
-    void refreshTokenSuccess() throws Exception{
-
-
+    @WithMockUser
+    void refreshTokenSuccess() throws Exception {
         given(refreshTokenService.findByToken(anyString()))
-                .willReturn(RefreshToken.create("test@naver.com"));
-        given(refreshTokenService.verifyExpiration(any()))
+                .willReturn(new RefreshToken("refreshToken"));
+        given(jwtTokenProvider.validateToken(anyString()))
                 .willReturn(true);
-        given(userService.loadUserByUsername(anyString()))
-                .willReturn(
-                        UserInfo.builder()
-                                .email("test@naver.com")
-                                .auth("ROLE_USER")
-                                .password(encoder.encode("zns9dyek951956@")).build()
-                );
-        given(jwtTokenProvider.getTokenExpiration(any()))
-                .willReturn(any());
-
+        given(jwtTokenProvider.getId(anyString()))
+                .willReturn(user.getId());
+        given(jwtTokenProvider.createAccessToken(anyString()))
+                .willReturn("accessToken");
+        given(jwtTokenProvider.getTokenExpiration(anyString()))
+                .willReturn(LocalDateTime.now());
 
         //when
-        ResultActions ra = mvc.perform(
-                get("/refreshToken")
-                        .cookie(new Cookie("refreshToken", "test")));
+        MvcResult mvcResult = mvc.perform(post(REFRESH_TOKEN_URL)
+                                 .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                 .cookie(new Cookie("refreshToken", "test")))
+                                 .andReturn();
+
         //then
-        MvcResult mvcResult = ra.andExpect(status().isOk()).andReturn();
+        assertThat(mvcResult.getResponse().getStatus()).isEqualTo(OK.value());
         assertThat(mvcResult.getResponse().getContentAsString()).isNotEmpty();
-
-
     }
 
     @Test
+    @WithMockUser
     void refreshTokenAfterRefreshTokenExpires() throws Exception {
         //given
-
         given(refreshTokenService.findByToken(anyString()))
-                .willReturn(RefreshToken.create("test@naver.com"));
-        given(refreshTokenService.verifyExpiration(any()))
+                .willReturn(new RefreshToken("refreshToken"));
+        given(jwtTokenProvider.validateToken(anyString()))
                 .willReturn(false);
 
-        //when
-        ResultActions ra = mvc.perform(
-                get("/refreshToken")
-                        .cookie(new Cookie("refreshToken", "test")));
-        //then
-        MvcResult mvcResult = ra.andExpect(status().isUnauthorized()).andReturn();
-        assertThat(mvcResult.getResponse().getContentAsString()).isEmpty();
-
-
+        //when, then
+        mvc.perform(post(REFRESH_TOKEN_URL)
+           .with(SecurityMockMvcRequestPostProcessors.csrf())
+           .cookie(new Cookie("refreshToken", "test")))
+           .andExpect(status().isBadRequest());
     }
 
     @Test
+    @WithMockUser
     void refreshTokenAfterRefreshTokenDeleted() throws Exception {
         //given
         given(refreshTokenService.findByToken(anyString()))
-                .willReturn(null);
+                .willThrow(new CustomException(INVALID_REFRESH_TOKEN));
 
-        //when
-        ResultActions ra = mvc.perform(
-                get("/refreshToken")
-                        .cookie(new Cookie("refreshToken", "test")));
-        //then
-        MvcResult mvcResult = ra.andExpect(status().isUnauthorized()).andReturn();
-        assertThat(mvcResult.getResponse().getContentAsString()).isEmpty();
-
+        //when, then
+        mvc.perform(post(REFRESH_TOKEN_URL)
+           .with(SecurityMockMvcRequestPostProcessors.csrf())
+           .cookie(new Cookie("refreshToken", "test")))
+           .andExpect(status().isBadRequest());
     }
 
     @Test
+    @WithMockUser
     void refreshTokenWithNoRefreshToken() throws Exception {
         //given
-        doReturn(null)
-                .when(refreshTokenService).findByToken(null);
+        //when, then
+        mvc.perform(post(REFRESH_TOKEN_URL)
+           .with(SecurityMockMvcRequestPostProcessors.csrf()))
+           .andExpect(status().isBadRequest());
+    }
 
-        //when
-        ResultActions ra = mvc.perform(
-                get("/refreshToken"));
-
-        //then
-        MvcResult mvcResult = ra.andExpect(status().isUnauthorized()).andReturn();
-        assertThat(mvcResult.getResponse().getContentAsString()).isEmpty();
-
+    private String toJson(Object object) {
+        try {
+            return objectMapper.writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }
 
