@@ -23,7 +23,8 @@ https://chatting-app-side-project.herokuapp.com/
 <li>H2(RDB)</li>
 <li>JPA & Spring-Data-JPA(ORM)</li>
 <li>JWT(Login)</li>
-<li>JUnit & Mockito(Test)</li><br><br><br>
+<li>JUnit & Mockito(Test)</li>
+<li>Spring Websocket & Spring Messaging</li><br><br><br>
 
 
 # 💻 Project Description
