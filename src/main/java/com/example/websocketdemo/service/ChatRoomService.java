@@ -36,7 +36,7 @@ public class ChatRoomService {
 
     public void deleteByCreatedDateLessThanEqual() {
         chatRoomRepository.findAll().stream().forEach((chatRoom -> {
-            if (chatRoom.getExpiryDate().isBefore(now()) && chatRoom.getCount() == 0) {
+            if (chatRoom.isRemovable()) {
                 chatRoomRepository.deleteById(chatRoom.getId());
             }
         }));

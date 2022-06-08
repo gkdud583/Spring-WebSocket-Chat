@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
+import static java.time.LocalDateTime.now;
 
 @Entity
 public class ChatRoom {
@@ -29,7 +30,7 @@ public class ChatRoom {
         this.id = UUID.randomUUID().toString();
         this.name = name;
         this.count = 0;
-        this.expiryDate = LocalDateTime.now().plusHours(VALID_HOUR);
+        this.expiryDate = now().plusHours(VALID_HOUR);
     }
 
     public String getId() {
@@ -82,4 +83,10 @@ public class ChatRoom {
         }
     }
 
+    public boolean isRemovable() {
+        if (this.expiryDate.isAfter(now()) && this.count == 0) {
+            return false;
+        }
+        return true;
+    }
 }
