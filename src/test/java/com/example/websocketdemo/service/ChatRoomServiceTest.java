@@ -3,7 +3,7 @@ package com.example.websocketdemo.service;
 import com.example.websocketdemo.entity.ChatRoom;
 import com.example.websocketdemo.exception.CustomException;
 import com.example.websocketdemo.service.dto.ChatRoomResponse;
-import com.example.websocketdemo.repository.ChatRoomRepository;
+import com.example.websocketdemo.entity.repository.ChatRoomRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;

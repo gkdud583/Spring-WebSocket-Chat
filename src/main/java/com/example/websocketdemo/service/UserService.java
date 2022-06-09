@@ -2,7 +2,7 @@ package com.example.websocketdemo.service;
 
 import com.example.websocketdemo.entity.User;
 import com.example.websocketdemo.exception.CustomException;
-import com.example.websocketdemo.repository.UserRepository;
+import com.example.websocketdemo.entity.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

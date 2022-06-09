@@ -2,7 +2,7 @@ package com.example.websocketdemo.service;
 
 import com.example.websocketdemo.entity.RefreshToken;
 import com.example.websocketdemo.exception.CustomException;
-import com.example.websocketdemo.repository.RefreshTokenRepository;
+import com.example.websocketdemo.entity.repository.RefreshTokenRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;

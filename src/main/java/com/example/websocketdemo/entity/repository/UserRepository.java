@@ -1,4 +1,4 @@
-package com.example.websocketdemo.repository;
+package com.example.websocketdemo.entity.repository;
 
 import com.example.websocketdemo.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

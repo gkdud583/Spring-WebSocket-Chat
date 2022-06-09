@@ -2,7 +2,7 @@ package com.example.websocketdemo.service;
 
 import com.example.websocketdemo.entity.RefreshToken;
 import com.example.websocketdemo.exception.CustomException;
-import com.example.websocketdemo.repository.RefreshTokenRepository;
+import com.example.websocketdemo.entity.repository.RefreshTokenRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import static com.example.websocketdemo.exception.ErrorCode.INVALID_REFRESH_TOKEN;
