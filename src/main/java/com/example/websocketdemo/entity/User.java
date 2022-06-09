@@ -2,6 +2,7 @@ package com.example.websocketdemo.entity;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 @Entity
@@ -10,8 +11,10 @@ public class User {
     @Id
     private String id;
 
+    @NotNull
     private String email;
 
+    @NotNull
     private String password;
 
     protected User() {

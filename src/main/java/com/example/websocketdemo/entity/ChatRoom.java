@@ -1,6 +1,7 @@
 package com.example.websocketdemo.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -11,16 +12,15 @@ public class ChatRoom {
     private static final int VALID_HOUR = 3;
 
     @Id
-    @Column
     private String id;
 
-    @Column
+    @NotNull
+    @Column(length = 23)
     private String name;
 
-    @Column
     private int count;
 
-    @Column
+    @NotNull
     private LocalDateTime expiryDate;
 
     protected ChatRoom() {

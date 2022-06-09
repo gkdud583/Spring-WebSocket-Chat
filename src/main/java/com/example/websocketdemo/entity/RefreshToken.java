@@ -1,6 +1,7 @@
 package com.example.websocketdemo.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -11,6 +12,7 @@ public class RefreshToken {
     @Id
     private String id;
 
+    @NotNull
     private String token;
 
     protected RefreshToken() {
