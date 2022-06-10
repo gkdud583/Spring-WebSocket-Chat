@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import static com.example.websocketdemo.exception.ErrorCode.INVALID_CHAT_ROOM_NAME;
 import static com.example.websocketdemo.exception.ErrorCode.NOT_FOUND_CHAT_ROOM;
-import static java.time.LocalDateTime.now;
 
 @Service
 @Transactional

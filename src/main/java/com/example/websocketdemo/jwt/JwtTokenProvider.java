@@ -46,13 +46,23 @@ public class JwtTokenProvider {
     public String createAccessToken(String id) {
         Claims claims = Jwts.claims().setSubject(id);
         Date now = new Date();
-        return Jwts.builder().setClaims(claims).setIssuedAt(now).setExpiration(new Date((new Date()).getTime() + accessTokenValidTime)).signWith(SignatureAlgorithm.HS256, secretKey).compact();
+        return Jwts.builder()
+                   .setClaims(claims)
+                   .setIssuedAt(now)
+                   .setExpiration(new Date((new Date()).getTime() + accessTokenValidTime))
+                   .signWith(SignatureAlgorithm.HS256, secretKey)
+                   .compact();
     }
 
     //JWT 토큰 생성
     public String createRefreshToken(String id) {
         Claims claims = Jwts.claims().setSubject(id);
-        return Jwts.builder().setClaims(claims).setIssuedAt(new Date()).setExpiration(new Date((new Date()).getTime() + refreshTokenValidTime)).signWith(SignatureAlgorithm.HS256, secretKey).compact();
+        return Jwts.builder()
+                   .setClaims(claims)
+                   .setIssuedAt(new Date())
+                   .setExpiration(new Date((new Date()).getTime() + refreshTokenValidTime))
+                   .signWith(SignatureAlgorithm.HS256, secretKey)
+                   .compact();
     }
 
     //토큰에서 회원정보 추출
