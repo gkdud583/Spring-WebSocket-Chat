@@ -13,7 +13,7 @@ public class ChatRoomStateService {
         this.chatRoomService = chatRoomService;
     }
 
-    @Scheduled(cron = "0/10 * * * * *")
+    @Scheduled(cron = "0/1 * * * * *")
     public void deleteRooms() {
         chatRoomService.deleteByCreatedDateLessThanEqual();
     }
