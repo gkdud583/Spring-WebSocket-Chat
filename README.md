@@ -84,12 +84,11 @@ https://chatting-app-side-project.herokuapp.com/
 ```
 //로그인 성공 후 로그인 페이지 접근 막기
     @GetMapping("/login")
-    public String showLoginForm(@CookieValue(name = "refreshToken", required = false)String refreshToken){
-        RefreshToken findRefreshToken = refreshTokenService.findByToken(refreshToken);
-        if(findRefreshToken != null && refreshTokenService.verifyExpiration(findRefreshToken)){
-            return "redirect:/chatRoomList";
+    public String showLoginForm(@CookieValue(name = "refreshToken", required = false) String refreshToken) {
+        if (!refreshTokenService.existsByToken(refreshToken)) {
+            return "login";
         }
-        return "login";
+        return "redirect:/chatRoomList";
     }
 ```
 ### 세션, 쿠키 기반 인증 방식에서 jwt로 변경
