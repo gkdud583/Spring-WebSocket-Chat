@@ -76,7 +76,7 @@ https://chatting-app-side-project.herokuapp.com/
 
 <ul>5-2. 클라이언트: 응답 바디에 accessToken이 있을 경우 accessToken을 지역변수에 저장한다.</ul>
 
-<ul>6. 클라이언트: 이후 요청 시마다 accessToken을 요청 헤더에 보내며 accessToken은 refreshToken이 유효한 한, setTimeOut()을 이용해 4번처럼 accessToken을 서버에 요청하고 refreshToken 만료 등의 이유로 accessToken이 발급되지 않은 경우는 /login으로 리다이렉트한다. </ul><br><br><br>
+<ul>6. 클라이언트: 이후 요청 시마다 accessToken을 요청 헤더에 보내며 accessToken은 refreshToken이 유효한 경우에 한하여, setTimeOut()을 이용해 4번처럼 accessToken을 서버에 요청하고 refreshToken 만료 등의 이유로 accessToken이 발급되지 않은 경우는 /login으로 리다이렉트한다. </ul><br><br><br>
 
 ## 초기 기획에서 변경한(개선한) 점
 ### 로그인 후 뒤로 가기 막기
@@ -93,7 +93,24 @@ https://chatting-app-side-project.herokuapp.com/
 ```
 ### 세션, 쿠키 기반 인증 방식에서 jwt로 변경
 많이 사용되는 jwt 기반 인증 방식을 사용해 보기 위해 세션, 쿠키를 사용한 인증 방식에서 jwt로 변경하였다.<br><br><br>
+```java
+@Override
+protected void configure(HttpSecurity http) throws Exception {
 
+http.
+        csrf().disable()
+        .exceptionHandling().authenticationEntryPoint(unauthorizedHandler())
+        .and()
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .authorizeRequests()
+        .anyRequest().authenticated()
+        .and()
+        .addFilterAfter(new JwtAuthenticationFilter(jwtTokenProvider, refreshTokenService), UsernamePasswordAuthenticationFilter.class);
+}
+```
+
+<br><br><br>
 ## 동작
 ### 메인
 ![image](https://user-images.githubusercontent.com/60775067/137299981-e4d61991-a8ff-4fb4-8309-fa05d5b48c34.png)
