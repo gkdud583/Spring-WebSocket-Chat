@@ -24,7 +24,6 @@ public class RefreshTokenService {
     }
 
     public boolean existsByToken(String token) {
-        validateToken(token);
         return refreshTokenRepository.existsByToken(token);
     }
 
