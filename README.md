@@ -11,7 +11,7 @@
 https://chatting-app-side-project.herokuapp.com/
 
 
-
+<br><br><br>
 
 # 🛠 Tech Stack
 ## FE
@@ -45,7 +45,7 @@ https://chatting-app-side-project.herokuapp.com/
 
 채팅방에 사용자가 참여하거나 나갈 때 채팅방 인원이 변경되고 변화를 화면에서 바로 확인할 수 있도록 setTimeout()으로 변경된 채팅방 정보를 받아오도록 하였습니다.<br><br><br>
 
-## 구조
+## Security
 ### Security
 * login 시 POST /login 컨트롤러로 요청하도록 해서 SpringSecurity filter chain을 거치지 않도록 한다.
 
@@ -55,7 +55,7 @@ https://chatting-app-side-project.herokuapp.com/
 
 * 인증이 되지 않은 사용자일 경우 /login으로 리다이렉트 해주기 위해 AuthenticationEntryPoint을 구현하여 리다이렉트한다.
 
-### 사용자 요청 순서
+### Login
 <ul>1. 클라이언트: login 페이지에서 이메일, 비밀번호 입력 후 POST /login 으로 로그인 요청을 보낸다.</ul>
 
 <ul>2-1. 서버: 서버는 유효한 이메일, 비밀번호일 경우 jwtTokenProvider클래스를 이용해서 accessToken, refreshToken 생성 후 각각 응답 바디와 쿠키에 넣어 응답을 보낸다.</ul>
@@ -76,42 +76,58 @@ https://chatting-app-side-project.herokuapp.com/
 
 <ul>5-2. 클라이언트: 응답 바디에 accessToken이 있을 경우 accessToken을 지역변수에 저장한다.</ul>
 
-<ul>6. 클라이언트: 이후 요청 시마다 accessToken을 요청 헤더에 보내며 accessToken은 refreshToken이 유효한 한, setTimeOut()을 이용해 4번처럼 accessToken을 서버에 요청하고 refreshToken 만료 등의 이유로 accessToken이 발급되지 않은 경우는 /login으로 리다이렉트한다. </ul><br><br><br>
+<ul>6. 클라이언트: 이후 요청 시마다 accessToken을 요청 헤더에 보내며 accessToken은 refreshToken이 유효한 경우에 한하여, setTimeOut()을 이용해 4번처럼 accessToken을 서버에 요청하고 refreshToken 만료 등의 이유로 accessToken이 발급되지 않은 경우는 /login으로 리다이렉트한다. </ul><br><br><br>
 
-### 초기 기획에서 변경한(개선한) 점
-#### 로그인 후 뒤로 가기 막기
+## 초기 기획에서 변경한(개선한) 점
+### 로그인 후 뒤로 가기 막기
 로그인 후에 뒤로 가기 시 로그인이 풀려 다시 로그인 페이지로 돌아가는 것을 GET /login 컨트롤러를 만들어 수정하였다.
 ```
 //로그인 성공 후 로그인 페이지 접근 막기
     @GetMapping("/login")
-    public String showLoginForm(@CookieValue(name = "refreshToken", required = false)String refreshToken){
-        RefreshToken findRefreshToken = refreshTokenService.findByToken(refreshToken);
-        if(findRefreshToken != null && refreshTokenService.verifyExpiration(findRefreshToken)){
-            return "redirect:/chatRoomList";
+    public String showLoginForm(@CookieValue(name = "refreshToken", required = false) String refreshToken) {
+        if (!refreshTokenService.existsByToken(refreshToken)) {
+            return "login";
         }
-        return "login";
+        return "redirect:/chatRoomList";
     }
 ```
-#### 세션, 쿠키 기반 인증 방식에서 jwt로 변경
+### 세션, 쿠키 기반 인증 방식에서 jwt로 변경
 많이 사용되는 jwt 기반 인증 방식을 사용해 보기 위해 세션, 쿠키를 사용한 인증 방식에서 jwt로 변경하였다.<br><br><br>
+```java
+@Override
+protected void configure(HttpSecurity http) throws Exception {
 
-### 동작
-#### 메인
+http.
+        csrf().disable()
+        .exceptionHandling().authenticationEntryPoint(unauthorizedHandler())
+        .and()
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .authorizeRequests()
+        .anyRequest().authenticated()
+        .and()
+        .addFilterAfter(new JwtAuthenticationFilter(jwtTokenProvider, refreshTokenService), UsernamePasswordAuthenticationFilter.class);
+}
+```
+
+<br><br><br>
+## 동작
+### 메인
 ![image](https://user-images.githubusercontent.com/60775067/137299981-e4d61991-a8ff-4fb4-8309-fa05d5b48c34.png)
 
 
-#### 로그인
+### 로그인
 ![image](https://user-images.githubusercontent.com/60775067/137300080-b4ebf9cc-9e3f-4d56-ab4a-be818f054e62.png)
 
 
-#### 회원가입
+### 회원가입
 ![image](https://user-images.githubusercontent.com/60775067/137300135-ac55e97f-d207-4610-a64c-a0cd11b1b0f9.png)
 
-#### 채팅방 리스트
+### 채팅방 리스트
 ![image](https://user-images.githubusercontent.com/60775067/137300353-b0208d5c-817e-4a1c-8f65-8e30e52df004.png)
 
 
-#### 채팅
+### 채팅
 ![image](https://user-images.githubusercontent.com/60775067/137300406-5170b4f2-c753-4d54-a093-dce556125e25.png)
 
 
