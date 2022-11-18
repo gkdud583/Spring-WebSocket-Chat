@@ -146,4 +146,4 @@ https://www.callicoder.com/spring-boot-websocket-chat-example/
 
 [[Spring] Spring Layer Test, Mockito](https://velog.io/@gkdud583/Spring-Layer-Test-Mockito)
 
-[[WebSocket 정리]](https://github.com/gkdud583/Spring-WebSocket)
+[WebSocket 정리](https://github.com/gkdud583/Spring-WebSocket)
