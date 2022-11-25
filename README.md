@@ -7,10 +7,6 @@
 ![Hnet-image (2)](https://user-images.githubusercontent.com/60775067/172282991-fbdd843b-c1d9-4b0c-8eed-693f6d45fd5f.gif)
 
 
-# 👀👇
-https://chatting-app-side-project.herokuapp.com/
-
-
 <br><br><br>
 
 # 🛠 Tech Stack
